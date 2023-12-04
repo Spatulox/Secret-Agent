@@ -1,6 +1,5 @@
-// somme.c
+// global_function.c
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <SDL.h>
@@ -28,8 +27,4 @@ void Log(char *string){
     fprintf(file, "[%s] : %s\n", date, string);
     fclose(file);
     fflush(stdout);
-}
-
-int somme(int a, int b) {
-    return a + b;
 }
