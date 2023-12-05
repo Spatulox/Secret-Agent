@@ -6,6 +6,8 @@
 
 #include "../includes/global_functions.h"
 
+// ----------------------------------------------------------- //
+
 void Log(char *string){
     // Create the time string
     time_t t = time(NULL);
@@ -27,4 +29,25 @@ void Log(char *string){
     fprintf(file, "[%s] : %s\n", date, string);
     fclose(file);
     fflush(stdout);
+}
+
+// ----------------------------------------------------------- //
+
+void inputString(char *string, int length) {
+    fgets(string, length, stdin);
+    if (string[strlen(string) - 1] == '\n')
+        string[strlen(string) - 1] = '\0';
+}
+
+// ----------------------------------------------------------- //
+
+long getSize(char *fileName){
+    FILE *fp = fopen(fileName, "rb");
+    if (fp == NULL)
+        return -1;
+    long size;
+    fseek(fp, 0, SEEK_END);
+    size = ftell(fp);
+    fclose(fp);
+    return size;
 }
