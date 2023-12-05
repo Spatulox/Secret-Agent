@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     // Récupère la taille de l'écran
     SDL_DisplayMode dm;
     if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
-        SDL_Log("Error when retrieving screen size");
+        Log("Error when retrieving screen size");
         dm.w = 800; // Default witdh
         dm.h = 600; // Default height
     }
@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     // Crée une fenêtre prenant la taille de l'écran
     SDL_Window* window = SDL_CreateWindow("Secret Agent", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, dm.w, dm.h, SDL_WINDOW_FULLSCREEN);
     if (window == NULL) {
-        SDL_Log("Error when creating Secret-Agent window");
+        Log("Error when creating Secret-Agent window");
         return 1;
     }
 
