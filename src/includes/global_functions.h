@@ -1,6 +1,6 @@
 // global_function.h
-#ifndef global_function_h
-#define global_function_h
+#ifndef GLOBAL_FUNCTION_H
+#define GLOBAL_FUNCTION_H
 
 void Log(char * string);
 void inputString(char *string, int length);

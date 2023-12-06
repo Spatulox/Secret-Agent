@@ -29,6 +29,10 @@ void Log(char *string){
     fprintf(file, "[%s] : %s\n", date, string);
     fclose(file);
     fflush(stdout);
+
+
+    SDL_Log("%s", string);
+
 }
 
 // ----------------------------------------------------------- //
