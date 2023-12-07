@@ -128,29 +128,6 @@ int main(int argc, char** argv) {
                         }
                     }
                 }
-                /*
-                // Retrieve data of the click
-                int mouseX, mouseY;
-                SDL_GetMouseState(&mouseX, &mouseY);
-                SDL_Point clickPoint = {mouseX, mouseY};
-
-                // Execute some kind of things
-                // If it's the play button
-                if (SDL_PointInRect(&clickPoint, &menuButton)) {
-                    Log("Cliqué !");
-                    isRunning = 0;
-                }
-                // If it's the parameters button
-                if (SDL_PointInRect(&clickPoint, &parameterButton)) {
-                    Log("Cliqué !");
-                    isRunning = 0;
-                }
-                // If it's the Quit button
-                if (SDL_PointInRect(&clickPoint, &quitButton)) {
-                    Log("Cliqué !");
-                    isRunning = 0;
-                }
-                 */
             }
         }
 
