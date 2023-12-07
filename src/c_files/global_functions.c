@@ -1,8 +1,10 @@
 // global_function.c
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #include "../includes/global_functions.h"
 
@@ -29,6 +31,30 @@ void Log(char *string){
     fprintf(file, "[%s] : %s\n", date, string);
     fclose(file);
     fflush(stdout);
+
+
+    SDL_Log("%s, %s", string, SDL_GetError());
+
+
+}
+
+// ----------------------------------------------------------- //
+
+void destroySDL(SDL_Window * window, SDL_Renderer * renderer, SDL_Texture * texture){
+
+    if (texture != NULL){
+        SDL_DestroyTexture(texture);
+    }
+    if (renderer != NULL){
+        SDL_DestroyRenderer(renderer);
+    }
+    if (window != NULL){
+        SDL_DestroyWindow(window);
+    }
+
+    TTF_Quit();
+    SDL_Quit();
+    exit(EXIT_FAILURE);
 }
 
 // ----------------------------------------------------------- //
