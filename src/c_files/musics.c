@@ -47,9 +47,11 @@ int DoubleAudioThread(void *data) {
         SDL_Delay(100);
     }
     // Instant play the other music
-    if (audioData->menuState == 0){
-        Log("Menu state 0 !");
+    if (*(audioData->menuState) == 0){
         Mix_PlayMusic(music1, audioData->repeat1);
+    }
+    else{
+        Log("Wrong menu State");
     }
 
     // Free first music
@@ -85,6 +87,7 @@ int DoubleAudioThread(void *data) {
 
     return 0;
 }
+
 
 // ----------------------------------------------------------- //
 
@@ -137,4 +140,34 @@ int AudioThread(void *data) {
     Mix_Quit();
 
     return 0;
+}
+
+// ----------------------------------------------------------- //
+
+void executeMusic(SDL_Thread *audio, int menuState){
+
+    SDL_Delay(100);
+    if (!Mix_PlayingMusic()) {
+        if (menuState == 0) {
+            DoubleAudioData *menuMusic = malloc(sizeof(DoubleAudioData));
+            menuMusic->string = "./musics/regrets.mp3";
+            menuMusic->repeat = 1;
+            menuMusic->string1 = "./musics/regrets_avec_rythmique.mp3";
+            menuMusic->repeat1 = 5;
+            menuMusic->menuState = &menuState;
+
+            SDL_DetachThread(audio);
+            audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
+            //SDL_Delay(1000);
+        } else if (menuState == 1) {
+            AudioData *playMenuMusic = malloc(sizeof(AudioData));
+            playMenuMusic->string = "./musics/chillax_un_max.mp3";
+            playMenuMusic->repeat = 1;
+
+            SDL_DetachThread(audio);
+            audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
+            //SDL_Delay(1000);
+        }
+    }
+    SDL_Delay(1000);
 }

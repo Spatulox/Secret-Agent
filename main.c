@@ -14,35 +14,6 @@
 #include "src/includes/buttons.h"
 #include "src/includes/audioData.h"
 
-void executeMusic(SDL_Thread *audio, int menuState){
-
-    SDL_Delay(100);
-    if (!Mix_PlayingMusic()) {
-        if (menuState == 0) {
-            DoubleAudioData *menuMusic = malloc(sizeof(DoubleAudioData));
-            menuMusic->string = "./musics/regrets.mp3";
-            menuMusic->repeat = 1;
-            menuMusic->string1 = "./musics/regrets_avec_rythmique.mp3";
-            menuMusic->repeat1 = 5;
-            menuMusic->menuState = &menuState;
-
-            SDL_DetachThread(audio);
-            audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
-            //SDL_Delay(1000);
-        } else if (menuState == 1) {
-            AudioData *playMenuMusic = malloc(sizeof(AudioData));
-            playMenuMusic->string = "./musics/chillax_un_max.mp3";
-            playMenuMusic->repeat = 1;
-
-            SDL_DetachThread(audio);
-            audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
-            //SDL_Delay(1000);
-        }
-    }
-    SDL_Delay(1000);
-
-//Mix_HaltMusic()
-}
 
 int main(int argc, char** argv) {
 
@@ -111,6 +82,7 @@ int main(int argc, char** argv) {
 
     int isRunning = 1;
     int menuState = 0; // 0 => Menu, 1 => Jouer, 2 => Paramètres
+    //SDL_LogInfo("%d", menuState);
 
     SDL_Thread *audio = NULL;
     SDL_Delay(100);
