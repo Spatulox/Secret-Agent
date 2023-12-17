@@ -5,6 +5,7 @@
 #include <time.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #include "../includes/global_functions.h"
 
@@ -52,9 +53,19 @@ void destroySDL(SDL_Window * window, SDL_Renderer * renderer, SDL_Texture * text
         SDL_DestroyWindow(window);
     }
 
+    Mix_Quit();
     TTF_Quit();
     SDL_Quit();
     exit(EXIT_FAILURE);
+}
+
+// ----------------------------------------------------------- //
+
+void destroySDLMusic(Mix_Music *music){
+
+    if (music != NULL) {
+        Mix_FreeMusic(music);
+    }
 }
 
 // ----------------------------------------------------------- //

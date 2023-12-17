@@ -1,17 +1,48 @@
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_thread.h>
+#include <SDL_mixer.h>
 // #include <curl/curl.h>
 
 // Functions
 #include "src/includes/global_functions.h"
 #include "src/includes/interface.h"
+#include "src/includes/musics.h"
 
 // Structures
 #include "src/includes/buttons.h"
+#include "src/includes/audioData.h"
 
+void executeMusic(SDL_Thread *audio, int menuState){
 
+    SDL_Delay(100);
+    if (!Mix_PlayingMusic()) {
+        if (menuState == 0) {
+            DoubleAudioData *menuMusic = malloc(sizeof(DoubleAudioData));
+            menuMusic->string = "./musics/regrets.mp3";
+            menuMusic->repeat = 1;
+            menuMusic->string1 = "./musics/regrets_avec_rythmique.mp3";
+            menuMusic->repeat1 = 5;
+            menuMusic->menuState = &menuState;
 
+            SDL_DetachThread(audio);
+            audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
+            //SDL_Delay(1000);
+        } else if (menuState == 1) {
+            AudioData *playMenuMusic = malloc(sizeof(AudioData));
+            playMenuMusic->string = "./musics/chillax_un_max.mp3";
+            playMenuMusic->repeat = 1;
+
+            SDL_DetachThread(audio);
+            audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
+            //SDL_Delay(1000);
+        }
+    }
+    SDL_Delay(1000);
+
+//Mix_HaltMusic()
+}
 
 int main(int argc, char** argv) {
 
@@ -35,6 +66,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+
     // ------------Retrieve screen size------------
     SDL_DisplayMode dm;
     if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
@@ -57,6 +89,16 @@ int main(int argc, char** argv) {
         destroySDL(window, renderer, NULL);
     }
 
+    // Create the windows icon
+
+    SDL_Surface* icon = SDL_LoadBMP("./icons/icon.bmp");
+    if (icon == NULL){
+        Log("ERROR : Impossible to create the icon of the game");
+    }
+    SDL_SetWindowIcon(window, icon);
+
+
+
 
     // ------------Initialize the menu------------
     int width = 400;
@@ -70,10 +112,19 @@ int main(int argc, char** argv) {
     int isRunning = 1;
     int menuState = 0; // 0 => Menu, 1 => Jouer, 2 => Paramètres
 
+    SDL_Thread *audio = NULL;
+    SDL_Delay(100);
+    executeMusic(audio, menuState);
 
     while(isRunning){
         // Render the renderer
         SDL_RenderPresent(renderer);
+
+        if (!Mix_PlayingMusic())
+        {
+            SDL_Delay(100);
+            executeMusic(audio, menuState);
+        }
 
         // Listen to events
         if (SDL_PollEvent(&event)) {
@@ -91,19 +142,23 @@ int main(int argc, char** argv) {
                 if (menuState == 0) {
                     for (int i = 0; i < 3; i++) {
                         if (SDL_PointInRect(&clickPoint, &(buttons[i].rect))) {
-                            // Le bouton i a été cliqué
+
                             if (strcmp(buttons[i].text, "Jouer") == 0) {
                                 Log("Jouer cliqué !");
                                 menuState = 1;
+                                SDL_DetachThread(audio);
+                                Mix_HaltMusic();
                                 break;
                             } else if (strcmp(buttons[i].text, "Parametres") == 0) {
                                 Log("Parametres cliqué !");
                                 isRunning = 0;
                                 menuState = 2;
+                                Mix_HaltMusic();
                                 break;
                             } else if (strcmp(buttons[i].text, "Quitter le jeu") == 0) {
                                 Log("Quitter cliqué !");
                                 isRunning = 0;
+                                Mix_HaltMusic();
                                 break;
                             }
                         }
@@ -124,10 +179,11 @@ int main(int argc, char** argv) {
     //SDL_RenderPresent(renderer);
     //SDL_Delay(10000);
 
-
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_FreeSurface(icon);
 
+    Mix_Quit();
     TTF_Quit();
     SDL_Quit();
 

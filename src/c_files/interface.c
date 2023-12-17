@@ -5,10 +5,14 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #include "../includes/interface.h"
 #include "../includes/global_functions.h"
-#include "../includes/buttons.h"
+#include "../includes/musics.h"
+
+// Structures
+#include "../includes/audioData.h"
 
 // ----------------------------------------------------------- //
 void createTextRectButton(SDL_Rect* rect, SDL_Window* window, SDL_Renderer * renderer, SDL_DisplayMode dm, int rectColorRed, int rectColorGreen, int rectColorBlue, int rectTransparency, char* string,  char* fontPath, SDL_Color fColor){
@@ -89,7 +93,6 @@ void createTextRectButton(SDL_Rect* rect, SDL_Window* window, SDL_Renderer * ren
     }
 
 
-
     if (SDL_RenderCopy(renderer, texture, NULL, rect) != 0){
         Log("ERROR : Impossible to print the texte");
         destroySDL(window, renderer, texture);
@@ -100,7 +103,6 @@ void createTextRectButton(SDL_Rect* rect, SDL_Window* window, SDL_Renderer * ren
 // ----------------------------------------------------------- //
 
 void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int height, SDL_DisplayMode dm, char* fontPath, Button buttons[]){
-    // Tableau de boutons
     buttons[0].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3) - (height / 2), width, height - (dm.h / 30)};
     buttons[0].text = "Jouer";
 
@@ -111,10 +113,14 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
     buttons[2].text = "Quitter le jeu";
 
     SDL_Color fColor = {0, 0, 0};
-    // Dessiner les boutons sur le renderer
+
+    // Draw buttons on the renderer
     for (int i = 0; i < 3; i++) {
         createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
     }
+
+    Log("Menu created");
+
 }
 
 // ----------------------------------------------------------- //
