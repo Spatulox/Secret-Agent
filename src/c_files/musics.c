@@ -171,7 +171,6 @@ void executeMusic(SDL_Thread *audio, int *menuState){
 
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
-            //SDL_Delay(1000);
         } else if (*menuState == 1) {
             AudioData *playMenuMusic = malloc(sizeof(AudioData));
             playMenuMusic->string = "./musics/chillax_un_max.mp3";
@@ -179,7 +178,6 @@ void executeMusic(SDL_Thread *audio, int *menuState){
 
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
-            //SDL_Delay(1000);
         } else if (*menuState == 2) {
             DoubleAudioData *menuMusic = malloc(sizeof(DoubleAudioData));
             menuMusic->string = "./musics/broken.mp3";
@@ -191,9 +189,8 @@ void executeMusic(SDL_Thread *audio, int *menuState){
 
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
-            //SDL_Delay(1000);
         }
     }
     // Need to wait but idk why, probably thread interferance or whatever
-    SDL_Delay(400);
+    SDL_Delay(600);
 }

@@ -102,7 +102,7 @@ void createTextRectButton(SDL_Rect* rect, SDL_Window* window, SDL_Renderer * ren
 
 // ----------------------------------------------------------- //
 
-void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int height, SDL_DisplayMode dm, char* fontPath, Button buttons[]){
+void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int height, SDL_DisplayMode dm, char* fontPath, Button buttons[], int * menuState){
     buttons[0].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3) - (height / 2), width, height - (dm.h / 30)};
     buttons[0].text = "Jouer";
 
@@ -112,11 +112,32 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
     buttons[2].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.5) - (height / 2), width, height - (dm.h / 30)};
     buttons[2].text = "Quitter le jeu";
 
+    buttons[3].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3) - (height / 2), width, height - (dm.h / 30)};
+    buttons[3].text = "Facile";
+
+    buttons[4].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 2) - (height / 2), width, height - (dm.h / 30)};
+    buttons[4].text = "Normal";
+
+    buttons[5].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.5) - (height / 2), width, height - (dm.h / 30)};
+    buttons[5].text = "Difficile";
+
     SDL_Color fColor = {0, 0, 0};
 
-    // Draw buttons on the renderer
-    for (int i = 0; i < 3; i++) {
-        createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
+
+    //SDL_Log("creating buttons menu state : %d", *menuState);
+    if (*menuState == 0){
+        // Draw buttons on the renderer
+        for (int i = 0; i < 3; i++) {
+            createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
+        }
+    }
+    else if(*menuState == 1){
+        for (int i = 3; i < 6; i++) {
+            createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
+        }
+    }
+    else{
+        Log("Wrong menu state, can't draw buttons");
     }
 
     Log("Menu created");
