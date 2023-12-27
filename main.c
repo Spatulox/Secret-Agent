@@ -1,44 +1,18 @@
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_thread.h>
+#include <SDL_mixer.h>
 // #include <curl/curl.h>
+
+// Functions
 #include "src/includes/global_functions.h"
 #include "src/includes/interface.h"
+#include "src/includes/musics.h"
 
-
-
-// Structure pour représenter un bouton
-typedef struct {
-    SDL_Rect rect;
-    char* text;
-    int nb;
-    // Autres propriétés du bouton
-} Button;
-
-// Tableau de boutons
-Button buttons[3];
-
-
-void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int height, SDL_DisplayMode dm, char* fontPath) {
-    buttons[0].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3) - (height / 2), width, height - (dm.h / 30)};
-    buttons[0].text = "Jouer";
-
-    buttons[1].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 2) - (height / 2), width, height - (dm.h / 30)};
-    buttons[1].text = "Parametres";
-
-    buttons[2].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.5) - (height / 2), width, height - (dm.h / 30)};
-    buttons[2].text = "Quitter le jeu";
-
-    SDL_Color fColor = {0, 0, 0};
-    // Dessiner les boutons sur le renderer
-    for (int i = 0; i < 3; i++) {
-        createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
-    }
-}
-
-
-
-
+// Structures
+#include "src/includes/buttons.h"
+#include "src/includes/audioData.h"
 
 
 int main(int argc, char** argv) {
@@ -63,6 +37,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+
     // ------------Retrieve screen size------------
     SDL_DisplayMode dm;
     if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
@@ -85,75 +60,84 @@ int main(int argc, char** argv) {
         destroySDL(window, renderer, NULL);
     }
 
+    // Create the windows icon
+
+    SDL_Surface* icon = SDL_LoadBMP("./icons/icon.bmp");
+    if (icon == NULL){
+        Log("ERROR : Impossible to create the icon of the game");
+    }
+    SDL_SetWindowIcon(window, icon);
+
+
+
 
     // ------------Initialize the menu------------
     int width = 400;
     int height = 150;
 
-    createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf");
+    // Tableau de boutons
+    Button buttons[3];
+    createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons);
 
 
     int isRunning = 1;
-    int menuGameEtc = 0; // 0 => Menu, 1 => Jouer, 2 => Paramètres
+    int menuState = 0; // 0 => Menu, 1 => Jouer, 2 => Paramètres
+    //SDL_LogInfo("%d", menuState);
 
+    SDL_Thread *audio = NULL;
+    SDL_Delay(100);
+    executeMusic(audio, menuState);
 
     while(isRunning){
+        // Render the renderer
         SDL_RenderPresent(renderer);
+
+        if (!Mix_PlayingMusic())
+        {
+            SDL_Delay(100);
+            executeMusic(audio, menuState);
+        }
+
         // Listen to events
         if (SDL_PollEvent(&event)) {
 
             // Do something when event is call
             if (event.type == SDL_QUIT) {
                 isRunning = 0;
-            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            }
+            else if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
                 int mouseX, mouseY;
                 SDL_GetMouseState(&mouseX, &mouseY);
                 SDL_Point clickPoint = {mouseX, mouseY};
 
-                for (int i = 0; i < 3; i++) {
-                    if (SDL_PointInRect(&clickPoint, &(buttons[i].rect))) {
-                        // Le bouton i a été cliqué
-                        if (strcmp(buttons[i].text, "Jouer") == 0) {
-                            Log("Jouer cliqué !");
-                            isRunning = 0;
-                            break;
-                        } else if (strcmp(buttons[i].text, "Parametres") == 0) {
-                            Log("Parametres cliqué !");
-                            isRunning = 0;
-                            break;
-                        } else if (strcmp(buttons[i].text, "Quitter le jeu") == 0) {
-                            Log("Quitter cliqué !");
-                            isRunning = 0;
-                            break;
+                if (menuState == 0) {
+                    for (int i = 0; i < 3; i++) {
+                        if (SDL_PointInRect(&clickPoint, &(buttons[i].rect))) {
+
+                            if (strcmp(buttons[i].text, "Jouer") == 0) {
+                                Log("Jouer cliqué !");
+                                menuState = 1;
+                                SDL_DetachThread(audio);
+                                Mix_HaltMusic();
+                                break;
+                            } else if (strcmp(buttons[i].text, "Parametres") == 0) {
+                                Log("Parametres cliqué !");
+                                isRunning = 0;
+                                menuState = 2;
+                                Mix_HaltMusic();
+                                break;
+                            } else if (strcmp(buttons[i].text, "Quitter le jeu") == 0) {
+                                Log("Quitter cliqué !");
+                                isRunning = 0;
+                                Mix_HaltMusic();
+                                break;
+                            }
                         }
                     }
                 }
-                /*
-                // Retrieve data of the click
-                int mouseX, mouseY;
-                SDL_GetMouseState(&mouseX, &mouseY);
-                SDL_Point clickPoint = {mouseX, mouseY};
-
-                // Execute some kind of things
-                // If it's the play button
-                if (SDL_PointInRect(&clickPoint, &menuButton)) {
-                    Log("Cliqué !");
-                    isRunning = 0;
-                }
-                // If it's the parameters button
-                if (SDL_PointInRect(&clickPoint, &parameterButton)) {
-                    Log("Cliqué !");
-                    isRunning = 0;
-                }
-                // If it's the Quit button
-                if (SDL_PointInRect(&clickPoint, &quitButton)) {
-                    Log("Cliqué !");
-                    isRunning = 0;
-                }
-                 */
             }
         }
-
     }
 
     // CLear le renderer
@@ -167,10 +151,11 @@ int main(int argc, char** argv) {
     //SDL_RenderPresent(renderer);
     //SDL_Delay(10000);
 
-
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_FreeSurface(icon);
 
+    Mix_Quit();
     TTF_Quit();
     SDL_Quit();
 

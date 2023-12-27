@@ -5,14 +5,17 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #include "../includes/interface.h"
 #include "../includes/global_functions.h"
+#include "../includes/musics.h"
+
+// Structures
+#include "../includes/audioData.h"
 
 // ----------------------------------------------------------- //
 void createTextRectButton(SDL_Rect* rect, SDL_Window* window, SDL_Renderer * renderer, SDL_DisplayMode dm, int rectColorRed, int rectColorGreen, int rectColorBlue, int rectTransparency, char* string,  char* fontPath, SDL_Color fColor){
-
-    //Log("createTextRectButton");
 
     if(rectColorRed > 255){
         rectColorRed = 255;
@@ -53,8 +56,8 @@ void createTextRectButton(SDL_Rect* rect, SDL_Window* window, SDL_Renderer * ren
     SDL_RenderFillRect(renderer, rect);
 
     // Load font
-    TTF_Font* font = TTF_OpenFont("../src/fonts/arial.ttf", 25);
-    // TTF_Font* font = TTF_OpenFont(fontPath, 25);
+    //TTF_Font* font = TTF_OpenFont("../src/fonts/arial.ttf", 25);
+    TTF_Font* font = TTF_OpenFont(fontPath, 25);
     if (font == NULL){
         Log("ERROR : Impossible to import the font");
         TTF_CloseFont(font);
@@ -90,34 +93,35 @@ void createTextRectButton(SDL_Rect* rect, SDL_Window* window, SDL_Renderer * ren
     }
 
 
-
     if (SDL_RenderCopy(renderer, texture, NULL, rect) != 0){
         Log("ERROR : Impossible to print the texte");
         destroySDL(window, renderer, texture);
     }
 
-    //Log("createTextRectButton finished !");
 }
 
 // ----------------------------------------------------------- //
 
-/*
-void createMenu(SDL_Window * window, SDL_Renderer* renderer, SDL_DisplayMode dm){
-    int width = 400;
-    int height = 150;
+void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int height, SDL_DisplayMode dm, char* fontPath, Button buttons[]){
+    buttons[0].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3) - (height / 2), width, height - (dm.h / 30)};
+    buttons[0].text = "Jouer";
+
+    buttons[1].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 2) - (height / 2), width, height - (dm.h / 30)};
+    buttons[1].text = "Parametres";
+
+    buttons[2].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.5) - (height / 2), width, height - (dm.h / 30)};
+    buttons[2].text = "Quitter le jeu";
 
     SDL_Color fColor = {0, 0, 0};
-    // Create the rectangle
-    SDL_Rect menuButton = { (dm.w/2)-(width/2), (dm.h/3)-(height/2), width, height-(dm.h/30) }; // Remplacez x, y, width et height par les coordonnées et les dimensions de votre rectangle
-    createTextRectButton(&menuButton, window, renderer, dm, 255, 255, 255, 255, "Jouer", "../src/fonts/arial.ttf", fColor);
 
-    SDL_Rect parameterButton = { (dm.w/2)-(width/2), (dm.h/2)-(height/2), width, height-(dm.h/30) }; // Remplacez x, y, width et height par les coordonnées et les dimensions de votre rectangle
-    createTextRectButton(&parameterButton, window, renderer, dm, 255, 255, 255, 255, "Parametres", "../src/fonts/arial.ttf", fColor);
+    // Draw buttons on the renderer
+    for (int i = 0; i < 3; i++) {
+        createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
+    }
 
-    SDL_Rect quitButton = { (dm.w/2)-(width/2), (dm.h/1.5)-(height/2), width, height-(dm.h/30) }; // Remplacez x, y, width et height par les coordonnées et les dimensions de votre rectangle
-    createTextRectButton(&quitButton, window, renderer, dm, 255, 255, 255, 255, "Quitter le jeu", "../src/fonts/arial.ttf", fColor);
+    Log("Menu created");
+
 }
- */
 
 // ----------------------------------------------------------- //
 
