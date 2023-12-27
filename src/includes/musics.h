@@ -7,6 +7,6 @@
 
 int DoubleAudioThread(void *data);
 int AudioThread(void *data);
-void executeMusic(SDL_Thread *audio, int menuState);
+void executeMusic(SDL_Thread *audio, int *menuState);
 
 #endif //MUSICS_H

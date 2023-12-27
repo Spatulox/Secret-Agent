@@ -75,27 +75,38 @@ int main(int argc, char** argv) {
     int width = 400;
     int height = 150;
 
-    // Tableau de boutons
+    // Initialize menu state
+    int isRunning = 1;
+    int lastMenuState = 0;
+    int coucou = 0;
+    int menuState = 0; // 0 => Menu principal, 1 => Menu jouer, 2 => Menu paramètres
+    /*menuState = &coucou;
+    SDL_Log("%d", *menuState);*/
+
+    // Initialize menu
     Button buttons[3];
     createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons);
 
-
-    int isRunning = 1;
-    int menuState = 0; // 0 => Menu, 1 => Jouer, 2 => Paramètres
-    //SDL_LogInfo("%d", menuState);
-
+    // Initialize music
     SDL_Thread *audio = NULL;
     SDL_Delay(100);
-    executeMusic(audio, menuState);
 
+    executeMusic(audio, &menuState);
+
+    // Main part
     while(isRunning){
         // Render the renderer
         SDL_RenderPresent(renderer);
 
+        /*if(lastMenuState != menuState && menuState < 3){
+            SDL_RenderClear(renderer);
+            //createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons);
+        }*/
+
         if (!Mix_PlayingMusic())
         {
             SDL_Delay(100);
-            executeMusic(audio, menuState);
+            executeMusic(audio, &menuState);
         }
 
         // Listen to events
@@ -123,9 +134,10 @@ int main(int argc, char** argv) {
                                 break;
                             } else if (strcmp(buttons[i].text, "Parametres") == 0) {
                                 Log("Parametres cliqué !");
-                                isRunning = 0;
+                                isRunning = 1;
                                 menuState = 2;
                                 Mix_HaltMusic();
+                                SDL_Delay(500);
                                 break;
                             } else if (strcmp(buttons[i].text, "Quitter le jeu") == 0) {
                                 Log("Quitter cliqué !");
