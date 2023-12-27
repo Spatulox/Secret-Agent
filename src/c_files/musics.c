@@ -54,7 +54,7 @@ int DoubleAudioThread(void *data) {
     // Instant play the other music
     //SDL_Log("%p", audioData->menuState);
     //SDL_Log("%d", *(audioData->menuState));
-    if (*(audioData->menuState) == 0){
+    if (*(audioData->menuState) == audioData->musicNumber){
         Mix_PlayMusic(music1, audioData->repeat1);
     }
     else{
@@ -167,6 +167,7 @@ void executeMusic(SDL_Thread *audio, int *menuState){
             menuMusic->string1 = "./musics/regrets_avec_rythmique.mp3";
             menuMusic->repeat1 = 5;
             menuMusic->menuState = menuState;
+            menuMusic->musicNumber = 0;
 
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
@@ -186,11 +187,13 @@ void executeMusic(SDL_Thread *audio, int *menuState){
             menuMusic->string1 = "./musics/broken_avec_rythmique.mp3";
             menuMusic->repeat1 = 5;
             menuMusic->menuState = menuState;
+            menuMusic->musicNumber = 2;
 
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
             //SDL_Delay(1000);
         }
     }
-    SDL_Delay(1000);
+    // Need to wait but idk why, probably thread interferance or whatever
+    SDL_Delay(400);
 }

@@ -16,6 +16,7 @@ typedef struct {
     char* string1;
     int repeat1;
     int * menuState;
+    int musicNumber
 } DoubleAudioData;
 
 #endif //AUDIODATA_H
