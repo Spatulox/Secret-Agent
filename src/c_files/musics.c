@@ -4,6 +4,7 @@
 
 #include <SDL.h>
 #include <SDL_mixer.h>
+#include <stdio.h>
 
 #include "../includes/global_functions.h"
 
@@ -15,6 +16,9 @@ int DoubleAudioThread(void *data) {
     Log("Begin doubleAudioThread");
 
     DoubleAudioData *audioData = (DoubleAudioData *)data;
+
+    //SDL_Log("%p", audioData->menuState);
+    //SDL_Log("%d", *(audioData->menuState));
 
     if (audioData == NULL){
         Log("Data are null");
@@ -46,13 +50,19 @@ int DoubleAudioThread(void *data) {
     while (Mix_PlayingMusic()) {
         SDL_Delay(100);
     }
+
     // Instant play the other music
+    //SDL_Log("%p", audioData->menuState);
+    //SDL_Log("%d", *(audioData->menuState));
     if (*(audioData->menuState) == 0){
         Mix_PlayMusic(music1, audioData->repeat1);
     }
     else{
         Log("Wrong menu State");
+        return 0;
     }
+
+    SDL_Log("%d", *(audioData->menuState));
 
     // Free first music
     if (music != NULL){
@@ -144,28 +154,41 @@ int AudioThread(void *data) {
 
 // ----------------------------------------------------------- //
 
-void executeMusic(SDL_Thread *audio, int menuState){
+void executeMusic(SDL_Thread *audio, int *menuState){
 
+    //SDL_Log("execute music : %p", menuState);
+    SDL_Log("execute music : %d", *menuState);
     SDL_Delay(100);
     if (!Mix_PlayingMusic()) {
-        if (menuState == 0) {
+        if (*menuState == 0) {
             DoubleAudioData *menuMusic = malloc(sizeof(DoubleAudioData));
             menuMusic->string = "./musics/regrets.mp3";
             menuMusic->repeat = 1;
             menuMusic->string1 = "./musics/regrets_avec_rythmique.mp3";
             menuMusic->repeat1 = 5;
-            menuMusic->menuState = &menuState;
+            menuMusic->menuState = menuState;
 
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
             //SDL_Delay(1000);
-        } else if (menuState == 1) {
+        } else if (*menuState == 1) {
             AudioData *playMenuMusic = malloc(sizeof(AudioData));
             playMenuMusic->string = "./musics/chillax_un_max.mp3";
-            playMenuMusic->repeat = 1;
+            playMenuMusic->repeat = 5;
 
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
+            //SDL_Delay(1000);
+        } else if (*menuState == 2) {
+            DoubleAudioData *menuMusic = malloc(sizeof(DoubleAudioData));
+            menuMusic->string = "./musics/broken.mp3";
+            menuMusic->repeat = 1;
+            menuMusic->string1 = "./musics/broken_avec_rythmique.mp3";
+            menuMusic->repeat1 = 5;
+            menuMusic->menuState = menuState;
+
+            SDL_DetachThread(audio);
+            audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
             //SDL_Delay(1000);
         }
     }
