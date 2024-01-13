@@ -12,6 +12,8 @@
 
 // Structures
 #include "src/includes/buttons.h"
+#include "src/includes/menu.h"
+#include "src/includes/player.h"
 #include "src/includes/audioData.h"
 
 
@@ -60,8 +62,14 @@ int main(int argc, char** argv) {
         destroySDL(window, renderer, NULL);
     }
 
-    // Create the windows icon
+    SDL_Renderer* playerRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    if (renderer == NULL){
+        Log("ERROR : Impossible to render the window");
+        destroySDL(window, renderer, NULL);
+    }
 
+
+    // Create the windows icon
     SDL_Surface* icon = SDL_LoadBMP("./icons/icon.bmp");
     if (icon == NULL){
         Log("ERROR : Impossible to create the icon of the game");
@@ -70,6 +78,13 @@ int main(int argc, char** argv) {
 
 
 
+    // ---------------- TEST --------------------
+
+
+
+    /*
+     *
+     */
 
     // ------------Initialize the menu------------
     int width = 400;
@@ -79,10 +94,10 @@ int main(int argc, char** argv) {
     int isRunning = 1;
     int lastMenuState = -1;
     int menuState = 0; // 0 => Menu principal, 1 => Menu jouer, 2 => Menu paramètres, 3 => In game
+    int difficulty = 0;
 
     // Initialize menu
     Button buttons[6];
-    //createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons, &menuState);
 
     // Initialize music
     SDL_Thread *audio = NULL;
@@ -90,6 +105,7 @@ int main(int argc, char** argv) {
 
     // Main part
     while(isRunning){
+
         // Render the renderer
         SDL_RenderPresent(renderer);
 
@@ -97,6 +113,9 @@ int main(int argc, char** argv) {
             SDL_RenderClear(renderer);
             createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
+        }
+        else if(lastMenuState != menuState && menuState == 3){
+            SDL_RenderClear(renderer);
         }
 
         if (!Mix_PlayingMusic())
@@ -111,37 +130,34 @@ int main(int argc, char** argv) {
             if (event.type == SDL_QUIT) {
                 isRunning = 0;
             }
+            // Get the mouse click
             else if (event.type == SDL_MOUSEBUTTONDOWN)
             {
                 int mouseX, mouseY;
                 SDL_GetMouseState(&mouseX, &mouseY);
                 SDL_Point clickPoint = {mouseX, mouseY};
+                changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons);
 
-                if (menuState == 0) {
-                    for (int i = 0; i < 3; i++) {
-                        if (SDL_PointInRect(&clickPoint, &(buttons[i].rect))) {
+            }
 
-                            if (strcmp(buttons[i].text, "Jouer") == 0) {
-                                Log("Jouer cliqué !");
-                                menuState = 1;
-                                SDL_DetachThread(audio);
-                                Mix_HaltMusic();
-                                break;
-                            } else if (strcmp(buttons[i].text, "Parametres") == 0) {
-                                Log("Parametres cliqué !");
-                                isRunning = 1;
-                                menuState = 2;
-                                Mix_HaltMusic();
-                                break;
-                            } else if (strcmp(buttons[i].text, "Quitter le jeu") == 0) {
-                                Log("Quitter cliqué !");
-                                isRunning = 0;
-                                Mix_HaltMusic();
-                                break;
-                            }
-                        }
-                    }
-                }
+            //Get the keyboard click
+            const Uint8 *state = SDL_GetKeyboardState(NULL);
+            if (state[SDL_SCANCODE_W]) {
+                Log("Touche Z !");
+            } else if (state[SDL_SCANCODE_S]) {
+                Log("Touche S !");
+            } else if (state[SDL_SCANCODE_D]) {
+                Log("Touche D !");
+                rightPlayer();
+            } else if (state[SDL_SCANCODE_A]) {
+                Log("Touche A !");
+                leftPlayer();
+            }
+
+            // Return to the mainMenu
+            if (state[SDL_SCANCODE_SEMICOLON]) {
+                Mix_HaltMusic();
+                menuState = 0;
             }
         }
     }
