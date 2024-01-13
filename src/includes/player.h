@@ -2,7 +2,13 @@
 // Created by M78st on 13/01/2024.
 //
 
-#ifndef MAIN_C_PLAYER_H
-#define MAIN_C_PLAYER_H
+#ifndef PLAYER_H
+#define PLAYER_H
 
-#endif //MAIN_C_PLAYER_H
+#include "../includes/structPlayer.h"
+
+int loadPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player);
+void rightPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player);
+void leftPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player);
+
+#endif //PLAYER_H
