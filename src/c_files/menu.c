@@ -16,17 +16,14 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
                     Log("Jouer cliqué !");
                     *menuState = 1;
                     SDL_DetachThread(audio);
-                    Mix_HaltMusic();
                     break;
                 } else if (strcmp(buttons[i].text, "Parametres") == 0) {
                     Log("Parametres cliqué !");
                     *menuState = 2;
-                    Mix_HaltMusic();
                     break;
                 } else if (strcmp(buttons[i].text, "Quitter le jeu") == 0) {
                     Log("Quitter cliqué !");
                     *isRunning = 0;
-                    Mix_HaltMusic();
                     break;
                 }
             }
@@ -39,19 +36,16 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
                     *difficulty = 1;
                     *menuState = 3;
                     SDL_DetachThread(audio);
-                    Mix_HaltMusic();
                     break;
                 } else if (strcmp(buttons[i].text, "Normal") == 0) {
                     Log("Normal cliqué !");
                     *difficulty = 2;
                     *menuState = 3;
-                    Mix_HaltMusic();
                     break;
                 } else if (strcmp(buttons[i].text, "Difficile") == 0) {
                     Log("Difficile cliqué !");
                     *difficulty = 3;
                     *menuState = 3;
-                    Mix_HaltMusic();
                     break;
                 } else {
                     Log("Pas de bouton");

@@ -16,6 +16,8 @@
 #include "src/includes/player.h"
 #include "src/includes/audioData.h"
 
+#include <SDL_image.h>
+
 
 int main(int argc, char** argv) {
 
@@ -62,12 +64,6 @@ int main(int argc, char** argv) {
         destroySDL(window, renderer, NULL);
     }
 
-    SDL_Renderer* playerRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    if (renderer == NULL){
-        Log("ERROR : Impossible to render the window");
-        destroySDL(window, renderer, NULL);
-    }
-
 
     // Create the windows icon
     SDL_Surface* icon = SDL_LoadBMP("./icons/icon.bmp");
@@ -76,15 +72,6 @@ int main(int argc, char** argv) {
     }
     SDL_SetWindowIcon(window, icon);
 
-
-
-    // ---------------- TEST --------------------
-
-
-
-    /*
-     *
-     */
 
     // ------------Initialize the menu------------
     int width = 400;
@@ -99,6 +86,10 @@ int main(int argc, char** argv) {
     // Initialize menu
     Button buttons[6];
 
+    // Initialize the player infos
+    Player playerInfos;
+    playerInfos.pathToPngFile = "./icons/player.png";
+
     // Initialize music
     SDL_Thread *audio = NULL;
     executeMusic(audio, &menuState);
@@ -109,15 +100,18 @@ int main(int argc, char** argv) {
         // Render the renderer
         SDL_RenderPresent(renderer);
 
+        // Create the buttons
         if(lastMenuState != menuState && menuState < 3){
             SDL_RenderClear(renderer);
             createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
+            Mix_HaltMusic();
         }
         else if(lastMenuState != menuState && menuState == 3){
-            SDL_RenderClear(renderer);
+            //SDL_RenderClear(renderer);
         }
 
+        // Play musics
         if (!Mix_PlayingMusic())
         {
             executeMusic(audio, &menuState);
@@ -126,7 +120,6 @@ int main(int argc, char** argv) {
         // Listen to events
         if (SDL_PollEvent(&event)) {
 
-            // Do something when event is call
             if (event.type == SDL_QUIT) {
                 isRunning = 0;
             }
@@ -140,26 +133,43 @@ int main(int argc, char** argv) {
 
             }
 
-            //Get the keyboard click
+            // Get the keyboard click
             const Uint8 *state = SDL_GetKeyboardState(NULL);
-            if (state[SDL_SCANCODE_W]) {
-                Log("Touche Z !");
-            } else if (state[SDL_SCANCODE_S]) {
-                Log("Touche S !");
-            } else if (state[SDL_SCANCODE_D]) {
-                Log("Touche D !");
-                rightPlayer();
-            } else if (state[SDL_SCANCODE_A]) {
-                Log("Touche A !");
-                leftPlayer();
+            if(menuState == 3){
+                if (state[SDL_SCANCODE_W]) {
+                    Log("Touche Z !");
+                } else if (state[SDL_SCANCODE_S]) {
+                    Log("Touche S !");
+                } else if (state[SDL_SCANCODE_D]) {
+                    SDL_RenderClear(renderer);
+                    rightPlayer(renderer, dm, &playerInfos);
+                    SDL_Delay(80);
+                } else if (state[SDL_SCANCODE_A]) {
+                    SDL_RenderClear(renderer);
+                    leftPlayer(renderer, dm, &playerInfos);
+                    SDL_Delay(80);
+                }
             }
 
             // Return to the mainMenu
             if (state[SDL_SCANCODE_SEMICOLON]) {
-                Mix_HaltMusic();
                 menuState = 0;
             }
         }
+
+        // -------------PLAYER------------
+
+
+        if(menuState == 3 && lastMenuState != 3){
+            lastMenuState = menuState;
+            //loadPlayer(renderer, dm, &playerInfos);
+
+            if(loadPlayer(renderer, dm, &playerInfos) != 0){
+                Log("Impossible to load the player");
+                destroySDL(window, renderer, NULL);
+            }
+        }
+
     }
 
     // CLear le renderer
