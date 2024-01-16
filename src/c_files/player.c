@@ -12,8 +12,6 @@
 
 int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos){
 
-    SDL_RenderClear(renderer);
-
     Log("Loading player");
     SDL_Surface* imageSurface = IMG_Load(imgInfos->pathToPngFile);
     if(imageSurface == NULL){
@@ -30,12 +28,12 @@ int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos){
     SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
 
     SDL_Rect dstRect;
-    dstRect.x = 0;
+    dstRect.x = (dm.w)*0.10;
     dstRect.y = dm.h - imageHeight;
     dstRect.w = imageWidth;
     dstRect.h = imageHeight;
 
-    imgInfos->coordinates.x = 0;
+    imgInfos->coordinates.x = (dm.w)*0.10;
     imgInfos->coordinates.y = dm.h - imageHeight;
     imgInfos->size.height = imageHeight;
     imgInfos->size.width = imageWidth;
@@ -58,12 +56,9 @@ int rightPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player){
         return 1;
     }
 
-    int imageWidth;
-    int imageHeight;
-    SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
-
     SDL_Rect dstRect;
-    if(player->coordinates.x + dm.w/100 + imageWidth < dm.w){
+    //player->size.width
+    if(player->coordinates.x + dm.w/100 + player->size.width < dm.w-((dm.w)*0.10)){
         player->coordinates.x = player->coordinates.x + dm.w/100;
     }
     dstRect.x = player->coordinates.x;
@@ -79,7 +74,7 @@ int rightPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player){
         SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
         player->verticalFlip = 0;
     }
-    Log("Right player");
+    //Log("Right player");
 }
 
 // ----------------------------------------------------------- //
@@ -95,12 +90,8 @@ int leftPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player){
         return 1;
     }
 
-    int imageWidth;
-    int imageHeight;
-    SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
-
     SDL_Rect dstRect;
-    if(player->coordinates.x - dm.w/100 > 0){
+    if(player->coordinates.x - dm.w/100 > (dm.w)*0.10){
         player->coordinates.x = player->coordinates.x - dm.w/100;
     }
     dstRect.x = player->coordinates.x;
@@ -116,6 +107,5 @@ int leftPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player){
         SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
         player->verticalFlip = 0;
     }
-
-    Log("Left player");
+    //Log("Left player");
 }
