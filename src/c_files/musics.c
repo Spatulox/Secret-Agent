@@ -190,6 +190,17 @@ void executeMusic(SDL_Thread *audio, int *menuState){
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
         }
+        else if (*menuState == 3) {
+            AudioData *playMenuMusic = malloc(sizeof(AudioData));
+            playMenuMusic->string = "./musics/Ado.mp3";
+            playMenuMusic->repeat = 50;
+
+            SDL_DetachThread(audio);
+            audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
+        }
+        else{
+            Log("No music for this menu state");
+        }
     }
     // Need to wait but idk why, probably thread interferance or whatever
     SDL_Delay(600);
