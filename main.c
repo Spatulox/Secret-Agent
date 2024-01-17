@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
 
 
     // Create the windows icon
-    SDL_Surface* icon = SDL_LoadBMP("./icons/icon.bmp");
+    SDL_Surface* icon = SDL_LoadBMP("../src/icons/icon.bmp");
     if (icon == NULL){
         Log("ERROR : Impossible to create the icon of the game");
     }
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 
     // Initialize the player infos
     Player playerInfos;
-    playerInfos.pathToPngFile = "./icons/player.png";
+    playerInfos.pathToPngFile = "../src/icons/player.png";
 
     // Initialize music
     SDL_Thread *audio = NULL;
