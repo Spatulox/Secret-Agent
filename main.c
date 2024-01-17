@@ -9,6 +9,7 @@
 #include "src/includes/global_functions.h"
 #include "src/includes/interface.h"
 #include "src/includes/musics.h"
+#include "src/includes/building.h"
 
 // Structures
 #include "src/includes/buttons.h"
@@ -66,7 +67,7 @@ int main(int argc, char** argv) {
 
 
     // Create the windows icon
-    SDL_Surface* icon = SDL_LoadBMP("./icons/icon.bmp");
+    SDL_Surface* icon = SDL_LoadBMP("../src/icons/icon.bmp");
     if (icon == NULL){
         Log("ERROR : Impossible to create the icon of the game");
     }
@@ -93,6 +94,10 @@ int main(int argc, char** argv) {
     // Initialize music
     SDL_Thread *audio = NULL;
     executeMusic(audio, &menuState);
+    SDL_Delay(100);
+
+    // Reserved the building var
+    Building build;
 
     // Main part
     while(isRunning){
@@ -100,16 +105,29 @@ int main(int argc, char** argv) {
         // Render the renderer
         SDL_RenderPresent(renderer);
 
-        // Create the buttons
+        // Create the menu
         if(lastMenuState != menuState && menuState < 3){
-            SDL_RenderClear(renderer);
-            createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons, &menuState);
+            createMenu(window, renderer, width, height, dm, "./fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
+        }
+
+        // Create the building and load the player
+        if(menuState == 3 && lastMenuState != 3){
+            SDL_RenderClear(renderer);
             Mix_HaltMusic();
+            lastMenuState = menuState;
+
+            if(createBuilding(renderer,&difficulty, &build, &dm) != 0){
+                Log("Impossible to create the building");
+                destroySDL(window, renderer, NULL);
+            }
+
+            if(loadPlayer(renderer, dm, &playerInfos) != 0){
+                Log("Impossible to load the player");
+                destroySDL(window, renderer, NULL);
+            }
         }
-        else if(lastMenuState != menuState && menuState == 3){
-            //SDL_RenderClear(renderer);
-        }
+
 
         // Play musics
         if (!Mix_PlayingMusic())
@@ -129,24 +147,41 @@ int main(int argc, char** argv) {
                 int mouseX, mouseY;
                 SDL_GetMouseState(&mouseX, &mouseY);
                 SDL_Point clickPoint = {mouseX, mouseY};
-                changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons);
+
+                if(menuState != 3){
+                    // We are in the menu
+                    changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons);
+                }
+                else{
+                    // We are not in the menu
+                    Log("Pas dans le menu");
+                }
 
             }
 
             // Get the keyboard click
             const Uint8 *state = SDL_GetKeyboardState(NULL);
             if(menuState == 3){
-                if (state[SDL_SCANCODE_W]) {
+                if (state[SDL_SCANCODE_W])
+                {
                     Log("Touche Z !");
-                } else if (state[SDL_SCANCODE_S]) {
+                }
+                else if (state[SDL_SCANCODE_S])
+                {
                     Log("Touche S !");
-                } else if (state[SDL_SCANCODE_D]) {
+                }
+                else if (state[SDL_SCANCODE_D])
+                {
                     SDL_RenderClear(renderer);
                     rightPlayer(renderer, dm, &playerInfos);
+                    drawBuilding(renderer, &build, &dm, &difficulty);
                     SDL_Delay(80);
-                } else if (state[SDL_SCANCODE_A]) {
+                }
+                else if (state[SDL_SCANCODE_A])
+                {
                     SDL_RenderClear(renderer);
                     leftPlayer(renderer, dm, &playerInfos);
+                    drawBuilding(renderer, &build, &dm, &difficulty);
                     SDL_Delay(80);
                 }
             }
@@ -154,19 +189,6 @@ int main(int argc, char** argv) {
             // Return to the mainMenu
             if (state[SDL_SCANCODE_SEMICOLON]) {
                 menuState = 0;
-            }
-        }
-
-        // -------------PLAYER------------
-
-
-        if(menuState == 3 && lastMenuState != 3){
-            lastMenuState = menuState;
-            //loadPlayer(renderer, dm, &playerInfos);
-
-            if(loadPlayer(renderer, dm, &playerInfos) != 0){
-                Log("Impossible to load the player");
-                destroySDL(window, renderer, NULL);
             }
         }
 

@@ -203,5 +203,5 @@ void executeMusic(SDL_Thread *audio, int *menuState){
         }
     }
     // Need to wait but idk why, probably thread interferance or whatever
-    SDL_Delay(600);
+    SDL_Delay(800);
 }
