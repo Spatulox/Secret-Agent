@@ -162,9 +162,9 @@ void executeMusic(SDL_Thread *audio, int *menuState){
     if (!Mix_PlayingMusic()) {
         if (*menuState == 0) {
             DoubleAudioData *menuMusic = malloc(sizeof(DoubleAudioData));
-            menuMusic->string = "../src/musics/regrets.mp3";
+            menuMusic->string = "./musics/regrets.mp3";
             menuMusic->repeat = 1;
-            menuMusic->string1 = "../src/musics/regrets_avec_rythmique.mp3";
+            menuMusic->string1 = "./musics/regrets_avec_rythmique.mp3";
             menuMusic->repeat1 = 5;
             menuMusic->menuState = menuState;
             menuMusic->musicNumber = 0;
@@ -173,16 +173,16 @@ void executeMusic(SDL_Thread *audio, int *menuState){
             audio = SDL_CreateThread(DoubleAudioThread, "AudioThread", menuMusic);
         } else if (*menuState == 1) {
             AudioData *playMenuMusic = malloc(sizeof(AudioData));
-            playMenuMusic->string = "../src/musics/chillax_un_max.mp3";
+            playMenuMusic->string = "./musics/chillax_un_max.mp3";
             playMenuMusic->repeat = 5;
 
             SDL_DetachThread(audio);
             audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
         } else if (*menuState == 2) {
             DoubleAudioData *menuMusic = malloc(sizeof(DoubleAudioData));
-            menuMusic->string = "../src/musics/broken.mp3";
+            menuMusic->string = "./musics/broken.mp3";
             menuMusic->repeat = 1;
-            menuMusic->string1 = "../src/musics/broken_avec_rythmique.mp3";
+            menuMusic->string1 = "./musics/broken_avec_rythmique.mp3";
             menuMusic->repeat1 = 5;
             menuMusic->menuState = menuState;
             menuMusic->musicNumber = 2;
@@ -192,7 +192,7 @@ void executeMusic(SDL_Thread *audio, int *menuState){
         }
         else if (*menuState == 3) {
             AudioData *playMenuMusic = malloc(sizeof(AudioData));
-            playMenuMusic->string = "../src/musics/Ado.mp3";
+            playMenuMusic->string = "./musics/Ado.mp3";
             playMenuMusic->repeat = 50;
 
             SDL_DetachThread(audio);

@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 
     // Initialize the player infos
     Player playerInfos;
-    playerInfos.pathToPngFile = "../src/icons/player.png";
+    playerInfos.pathToPngFile = "./icons/player.png";
 
     // Initialize music
     SDL_Thread *audio = NULL;
@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
 
         // Create the menu
         if(lastMenuState != menuState && menuState < 3){
-            createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons, &menuState);
+            createMenu(window, renderer, width, height, dm, "./fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
         }
 
