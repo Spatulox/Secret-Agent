@@ -103,6 +103,10 @@ void createTextRectButton(SDL_Rect* rect, SDL_Window* window, SDL_Renderer * ren
 // ----------------------------------------------------------- //
 
 void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int height, SDL_DisplayMode dm, char* fontPath, Button buttons[], int * menuState){
+
+    SDL_RenderClear(renderer);
+    Mix_HaltMusic();
+
     buttons[0].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3) - (height / 2), width, height - (dm.h / 30)};
     buttons[0].text = "Jouer";
 

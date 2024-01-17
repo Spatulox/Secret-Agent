@@ -104,14 +104,13 @@ int main(int argc, char** argv) {
         // Render the renderer
         SDL_RenderPresent(renderer);
 
-        // Create the buttons
+        // Create the menu
         if(lastMenuState != menuState && menuState < 3){
-            SDL_RenderClear(renderer);
             createMenu(window, renderer, width, height, dm, "../src/fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
-            Mix_HaltMusic();
         }
 
+        // Create the building and load the player
         if(menuState == 3 && lastMenuState != 3){
             SDL_RenderClear(renderer);
             lastMenuState = menuState;
@@ -146,23 +145,38 @@ int main(int argc, char** argv) {
                 int mouseX, mouseY;
                 SDL_GetMouseState(&mouseX, &mouseY);
                 SDL_Point clickPoint = {mouseX, mouseY};
-                changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons);
+
+                if(menuState != 3){
+                    // We are in the menu
+                    changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons);
+                }
+                else{
+                    // We are not in the menu
+                    Log("Pas dans le menu");
+                }
 
             }
 
             // Get the keyboard click
             const Uint8 *state = SDL_GetKeyboardState(NULL);
             if(menuState == 3){
-                if (state[SDL_SCANCODE_W]) {
+                if (state[SDL_SCANCODE_W])
+                {
                     Log("Touche Z !");
-                } else if (state[SDL_SCANCODE_S]) {
+                }
+                else if (state[SDL_SCANCODE_S])
+                {
                     Log("Touche S !");
-                } else if (state[SDL_SCANCODE_D]) {
+                }
+                else if (state[SDL_SCANCODE_D])
+                {
                     SDL_RenderClear(renderer);
                     rightPlayer(renderer, dm, &playerInfos);
                     drawBuilding(renderer, &build, &dm, &difficulty);
                     SDL_Delay(80);
-                } else if (state[SDL_SCANCODE_A]) {
+                }
+                else if (state[SDL_SCANCODE_A])
+                {
                     SDL_RenderClear(renderer);
                     leftPlayer(renderer, dm, &playerInfos);
                     drawBuilding(renderer, &build, &dm, &difficulty);
