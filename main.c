@@ -94,6 +94,7 @@ int main(int argc, char** argv) {
     // Initialize music
     SDL_Thread *audio = NULL;
     executeMusic(audio, &menuState);
+    SDL_Delay(100);
 
     // Reserved the building var
     Building build;
