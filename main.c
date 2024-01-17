@@ -114,6 +114,7 @@ int main(int argc, char** argv) {
         // Create the building and load the player
         if(menuState == 3 && lastMenuState != 3){
             SDL_RenderClear(renderer);
+            Mix_HaltMusic();
             lastMenuState = menuState;
 
             if(createBuilding(renderer,&difficulty, &build, &dm) != 0){
