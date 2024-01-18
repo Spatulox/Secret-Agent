@@ -1,5 +1,5 @@
 //
-// Created by M78st on 17/12/2023.
+// Created by Marc on 17/12/2023.
 //
 
 #include <SDL.h>
@@ -62,7 +62,7 @@ int DoubleAudioThread(void *data) {
         return 0;
     }
 
-    SDL_Log("%d", *(audioData->menuState));
+    //SDL_Log("Saved menu state %d", *(audioData->menuState));
 
     // Free first music
     if (music != NULL){
@@ -157,7 +157,7 @@ int AudioThread(void *data) {
 void executeMusic(SDL_Thread *audio, int *menuState){
 
     //SDL_Log("execute music : %p", menuState);
-    SDL_Log("execute music : %d", *menuState);
+    //SDL_Log("execute music : %d", *menuState);
     SDL_Delay(100);
     if (!Mix_PlayingMusic()) {
         if (*menuState == 0) {

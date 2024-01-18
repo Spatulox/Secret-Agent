@@ -1,5 +1,5 @@
 //
-// Created by M78st on 13/01/2024.
+// Created by Marc on 13/01/2024.
 //
 
 #ifndef STRUCTPLAYER_H

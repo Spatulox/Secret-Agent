@@ -1,5 +1,5 @@
 //
-// Created by M78st on 16/01/2024.
+// Created by Marc on 16/01/2024.
 //
 #include <SDL.h>
 
@@ -57,7 +57,7 @@ void drawBuilding(SDL_Renderer * renderer, Building * Build, const SDL_DisplayMo
     // Drawn floors
     double baseDmHeight = dm->h*0.1;
     int deltaBaseCeil = Build->rightWall.y2 - Build->rightWall.y1;
-    SDL_Log("DeltaBaseCeil : %d", deltaBaseCeil);
+    //SDL_Log("DeltaBaseCeil : %d", deltaBaseCeil);
 
     int maxI = *difficulty * 3;
     for (int i = 1; i < maxI; ++i) {
