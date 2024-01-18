@@ -10,12 +10,14 @@
 #include "src/includes/interface.h"
 #include "src/includes/musics.h"
 #include "src/includes/building.h"
+#include "src/includes/interactivesParts.h"
 
 // Structures
 #include "src/includes/buttons.h"
 #include "src/includes/menu.h"
 #include "src/includes/player.h"
 #include "src/includes/audioData.h"
+#include "src/includes/interactivesStruct.h"
 
 #include <SDL_image.h>
 
@@ -67,7 +69,7 @@ int main(int argc, char** argv) {
 
 
     // Create the windows icon
-    SDL_Surface* icon = SDL_LoadBMP("../src/icons/icon.bmp");
+    SDL_Surface* icon = SDL_LoadBMP("./icons/icon.bmp");
     if (icon == NULL){
         Log("ERROR : Impossible to create the icon of the game");
     }
@@ -99,6 +101,9 @@ int main(int argc, char** argv) {
     // Reserved the building var
     Building build;
 
+    // Reserve the InteractivesPart
+    InteractiveList * interactiveList = NULL;
+
     // Main part
     while(isRunning){
 
@@ -122,7 +127,12 @@ int main(int argc, char** argv) {
                 destroySDL(window, renderer, NULL);
             }
 
-            if(loadPlayer(renderer, dm, &playerInfos) != 0){
+            if(createInteractive(&difficulty, renderer, interactiveList) != 0){
+                Log("Impossible to create the interactive parts");
+                destroySDL(window, renderer, NULL);
+            }
+
+            if(loadPlayer(renderer, dm, &playerInfos, &difficulty) != 0){
                 Log("Impossible to load the player");
                 destroySDL(window, renderer, NULL);
             }
@@ -204,6 +214,8 @@ int main(int argc, char** argv) {
     // Log("10 seconds of delay");
     //SDL_RenderPresent(renderer);
     //SDL_Delay(10000);
+
+    freeChainList(interactiveList);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
