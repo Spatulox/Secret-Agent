@@ -13,16 +13,16 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
         for (int i = 0; i < 3; i++) {
             if (SDL_PointInRect(&clickPoint, &(buttons[i].rect))) {
                 if (strcmp(buttons[i].text, "Jouer") == 0) {
-                    Log("Jouer cliqué !");
+                    //Log("Jouer cliqué !");
                     *menuState = 1;
                     SDL_DetachThread(audio);
                     break;
                 } else if (strcmp(buttons[i].text, "Parametres") == 0) {
-                    Log("Parametres cliqué !");
+                    //Log("Parametres cliqué !");
                     *menuState = 2;
                     break;
                 } else if (strcmp(buttons[i].text, "Quitter le jeu") == 0) {
-                    Log("Quitter cliqué !");
+                    //Log("Quitter cliqué !");
                     *isRunning = 0;
                     break;
                 }
@@ -32,18 +32,18 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
         for (int i = 3; i < 6; i++) {
             if (SDL_PointInRect(&clickPoint, &(buttons[i].rect))) {
                 if (strcmp(buttons[i].text, "Facile") == 0) {
-                    Log("Facile cliqué !");
+                    //Log("Facile cliqué !");
                     *difficulty = 1;
                     *menuState = 3;
                     SDL_DetachThread(audio);
                     break;
                 } else if (strcmp(buttons[i].text, "Normal") == 0) {
-                    Log("Normal cliqué !");
+                    //Log("Normal cliqué !");
                     *difficulty = 2;
                     *menuState = 3;
                     break;
                 } else if (strcmp(buttons[i].text, "Difficile") == 0) {
-                    Log("Difficile cliqué !");
+                    //Log("Difficile cliqué !");
                     *difficulty = 3;
                     *menuState = 3;
                     break;
@@ -51,9 +51,9 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
                     Log("Pas de bouton");
                 }
             }
-            else{
-                Log("Meh");
-            }
+            //else{
+            //    Log("Meh");
+            //}
         }
     }
 }
