@@ -1,16 +1,17 @@
 //
-// Created by M78st on 13/01/2024.
+// Created by Marc on 13/01/2024.
 //
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <math.h>
 
 #include "../includes/global_functions.h"
 #include "../includes/structPlayer.h"
 
 // ----------------------------------------------------------- //
 
-int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos){
+int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos, const int * difficulty){
 
     Log("Loading player");
     SDL_Surface* imageSurface = IMG_Load(imgInfos->pathToPngFile);
@@ -27,11 +28,29 @@ int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos){
     int imageHeight;
     SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
 
+    //int sizeToMultiply = 4 - *difficulty;
+    int percentage;
+    if (*difficulty == 1) {
+        percentage = 200;
+    } else if (*difficulty == 2) {
+        percentage = 100;
+    } else if (*difficulty == 3) {
+        percentage = 80;
+    }
+
+    imageWidth = (imageWidth * percentage) / 100;
+    imageHeight = (imageHeight * percentage) / 100;
+
+    SDL_Log("%d", percentage);
     SDL_Rect dstRect;
-    dstRect.x = (dm.w)*0.10;
-    dstRect.y = dm.h - imageHeight;
     dstRect.w = imageWidth;
     dstRect.h = imageHeight;
+
+    SDL_Log("%d", imageHeight);
+    SDL_Log("%d", imageWidth);
+
+    dstRect.x = (dm.w)*0.10;
+    dstRect.y = dm.h - imageHeight;
 
     imgInfos->coordinates.x = (dm.w)*0.10;
     imgInfos->coordinates.y = dm.h - imageHeight;
@@ -40,6 +59,8 @@ int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos){
     imgInfos->verticalFlip = 0;
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
 
+    SDL_Log("%d", imgInfos->coordinates.x);
+    SDL_Log("%d", imgInfos->coordinates.y);
 }
 
 // ----------------------------------------------------------- //
