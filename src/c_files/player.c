@@ -41,13 +41,13 @@ int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos, c
     imageWidth = (imageWidth * percentage) / 100;
     imageHeight = (imageHeight * percentage) / 100;
 
-    SDL_Log("%d", percentage);
+    //SDL_Log("%d", percentage);
     SDL_Rect dstRect;
     dstRect.w = imageWidth;
     dstRect.h = imageHeight;
 
-    SDL_Log("%d", imageHeight);
-    SDL_Log("%d", imageWidth);
+    //SDL_Log("%d", imageHeight);
+    //SDL_Log("%d", imageWidth);
 
     dstRect.x = (dm.w)*0.10;
     dstRect.y = dm.h - imageHeight;
@@ -59,8 +59,8 @@ int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos, c
     imgInfos->verticalFlip = 0;
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
 
-    SDL_Log("%d", imgInfos->coordinates.x);
-    SDL_Log("%d", imgInfos->coordinates.y);
+    //SDL_Log("%d", imgInfos->coordinates.x);
+    //SDL_Log("%d", imgInfos->coordinates.y);
 }
 
 // ----------------------------------------------------------- //
