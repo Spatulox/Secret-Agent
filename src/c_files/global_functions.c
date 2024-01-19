@@ -124,8 +124,11 @@ int addElementToChainList(InteractivePart* newPart, InteractiveList** head) {
 }
 // ----------------------------------------------------------- //
 
-void freeChainList(InteractiveList* head) {
-    InteractiveList* curr = head;
+void freeChainList(InteractiveList** head) {
+
+    //printInteractiveList(*head);
+
+    InteractiveList* curr = *head;
     InteractiveList* next;
 
     while (curr != NULL) {
@@ -134,6 +137,7 @@ void freeChainList(InteractiveList* head) {
         curr = next;
     }
 
+    *head = NULL;
     Log("Chain list full free");
 }
 
@@ -144,7 +148,7 @@ void printInteractiveList(InteractiveList *list) {
     int element = 0;
     while (list != NULL) {
         // Imprimer les détails de l'élément interactif en cours
-        SDL_Log("%d", element);
+        // SDL_Log("%d", element);
         switch (list->interactivePart.type) {
             case BUTTON:
                 SDL_Log("Interactive Type: Button\n");

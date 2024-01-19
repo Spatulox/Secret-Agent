@@ -127,9 +127,12 @@ int main(int argc, char** argv) {
                 destroySDL(window, renderer, NULL);
             }
 
-            if(createInteractive(&difficulty, renderer, interactiveList) != 0){
+            if(createInteractive(window, &difficulty, renderer, &interactiveList) != 0){
                 Log("Impossible to create the interactive parts");
                 destroySDL(window, renderer, NULL);
+            }
+            else{
+                printInteractiveList(interactiveList);
             }
 
             if(loadPlayer(renderer, dm, &playerInfos, &difficulty) != 0){
@@ -183,16 +186,18 @@ int main(int argc, char** argv) {
                 else if (state[SDL_SCANCODE_D])
                 {
                     SDL_RenderClear(renderer);
-                    rightPlayer(renderer, dm, &playerInfos);
                     drawBuilding(renderer, &build, &dm, &difficulty);
-                    SDL_Delay(80);
+                    drawInteractiveParts(renderer, interactiveList, &difficulty);
+                    rightPlayer(renderer, dm, &playerInfos);
+                    SDL_Delay(70);
                 }
                 else if (state[SDL_SCANCODE_A])
                 {
                     SDL_RenderClear(renderer);
-                    leftPlayer(renderer, dm, &playerInfos);
                     drawBuilding(renderer, &build, &dm, &difficulty);
-                    SDL_Delay(80);
+                    drawInteractiveParts(renderer, interactiveList, &difficulty);
+                    leftPlayer(renderer, dm, &playerInfos);
+                    SDL_Delay(70);
                 }
             }
 
@@ -215,7 +220,7 @@ int main(int argc, char** argv) {
     //SDL_RenderPresent(renderer);
     //SDL_Delay(10000);
 
-    freeChainList(interactiveList);
+    freeChainList(&interactiveList);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

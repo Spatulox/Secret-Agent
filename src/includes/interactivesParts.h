@@ -7,12 +7,13 @@
 
 #include "../includes/interactivesStruct.h"
 
-int createInteractive(const int * difficulty, SDL_Renderer * renderer, InteractiveList * interactiveList);
-void drawInteractiveParts();
-void drawButtons();
+int createInteractive(SDL_Window * window, const int * difficulty, SDL_Renderer * renderer, InteractiveList ** interactiveList);
+void drawInteractiveParts(SDL_Renderer * renderer, InteractiveList *list, const int * difficulty);
+void drawButtons(SDL_Renderer * renderer, InteractivePart *part);
 void drawElectricMetter();
 void drawCode();
 void drawLift();
 void drawDoors();
+int drawStairs(SDL_Renderer * renderer, InteractivePart *part, const int * difficulty);
 
 #endif //INTERACTIVESPARTS_H

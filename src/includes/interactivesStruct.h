@@ -59,6 +59,7 @@ typedef struct {
     int upDownStairs;
     Point position;
     struct Stairs * linkStairs;
+    Size size;
 } Stairs;
 
 // ------------------------------------------------- //
