@@ -94,20 +94,18 @@ long getSize(char *fileName){
 }
 
 // ----------------------------------------------------------- //
-/*
-int addElementToChainList(InteractivePart newPart, InteractiveList** head) {
-    InteractiveList* new = malloc(sizeof(InteractiveList));
-    if (newPart == NULL) {
-        Log("Impossible to create an element for the chain list");
-        return 1;
-    }
 
-    new->interactivePart = newPart;
-    new->next = *head;
-    *head = new;
-    Log("Element created");
-    return 0;
-}*/
+int getLastFloorGround(const int * window_height, const int * difficulty){
+    if(window_height == NULL || difficulty == NULL){
+        return -1;
+    }
+    int ceilBuildHeight = (int) (*window_height * 0.1);
+    int downFloor = *window_height - ceilBuildHeight;
+    int lastFloorGround = (downFloor / (*difficulty * 3)) + ceilBuildHeight;
+    return lastFloorGround;
+}
+
+// ----------------------------------------------------------- //
 
 int addElementToChainList(InteractivePart* newPart, InteractiveList** head) {
     InteractiveList* new = malloc(sizeof(InteractiveList));
@@ -152,6 +150,10 @@ void printInteractiveList(InteractiveList *list) {
         switch (list->interactivePart.type) {
             case BUTTON:
                 SDL_Log("Interactive Type: Button\n");
+                break;
+
+            case CHEST:
+                SDL_Log("Interactive Type: Chest\n");
                 break;
 
             case STAIRS:
