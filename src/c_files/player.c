@@ -100,6 +100,35 @@ int rightPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player){
 
 // ----------------------------------------------------------- //
 
+int drawPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player){
+
+    SDL_Surface* imageSurface = IMG_Load(player->pathToPngFile);
+    if(imageSurface == NULL){
+        return 1;
+    }
+
+    SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
+    if(imageTexture == NULL){
+        return 1;
+    }
+
+    SDL_Rect dstRect;
+    dstRect.x = player->coordinates.x;
+    dstRect.y = player->coordinates.y;
+    dstRect.w = player->size.width;
+    dstRect.h = player->size.height;
+
+    if(player->verticalFlip == 1){
+        SDL_RenderCopyEx(renderer, imageTexture, NULL, &dstRect, 0, NULL, SDL_FLIP_HORIZONTAL);
+    }
+    else{
+        SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
+    }
+    //Log("Right player");
+}
+
+// ----------------------------------------------------------- //
+
 int leftPlayer(SDL_Renderer* renderer,  SDL_DisplayMode dm, Player * player){
     SDL_Surface* imageSurface = IMG_Load(player->pathToPngFile);
     if(imageSurface == NULL){
