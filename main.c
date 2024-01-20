@@ -176,7 +176,10 @@ int main(int argc, char** argv) {
                 switch (event.key.keysym.sym) {
                     case SDLK_z:
                         SDL_RenderClear(renderer);
-                        interactWithPart(interactiveList, &playerInfos);
+                        interactWithPart(interactiveList, &playerInfos, &menuState);
+                        if(menuState != 3){
+                            break;
+                        }
                         drawBuilding(renderer, &build, &dm, &difficulty);
                         drawInteractiveParts(window, renderer, interactiveList, &difficulty);
                         drawPlayer(renderer, dm, &playerInfos);

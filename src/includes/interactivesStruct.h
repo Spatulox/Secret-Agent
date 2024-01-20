@@ -64,13 +64,22 @@ typedef struct {
 
 // ------------------------------------------------- //
 
+// Doors to open
+typedef struct {
+    Point position;
+    Size size;
+} Chest;
+
+// ------------------------------------------------- //
+
 typedef enum {
     BUTTON,
     ELECTRIC_METER,
     CODE,
     LIFT,
     DOOR,
-    STAIRS
+    STAIRS,
+    CHEST
 } InteractiveType;
 
 // Interactive things
@@ -83,6 +92,7 @@ typedef struct {
         Lift lift;
         Doors door;
         Stairs stairs;
+        Chest chest;
     } part;
 } InteractivePart;
 

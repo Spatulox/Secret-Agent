@@ -16,6 +16,6 @@ void drawLift();
 void drawDoors();
 int drawStairs(SDL_Renderer * renderer, InteractivePart *part);
 
-void interactWithPart(InteractiveList * interactiveList, Player * player);
+void interactWithPart(InteractiveList * interactiveList, Player * player, int * menuState);
 
 #endif //INTERACTIVESPARTS_H

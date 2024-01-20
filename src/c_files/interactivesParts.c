@@ -111,7 +111,31 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
 
 // ------------------------------------------ //
 
+int createChest(SDL_Window *window, InteractiveList ** interactiveList, const int * difficulty){
+    InteractivePart * chest = malloc(sizeof(InteractivePart));
 
+    if(chest == NULL){
+        Log("Impossible to reserve the data");
+        freeChainList(interactiveList);
+        return 1;
+    }
+
+    int window_width, window_height;
+    SDL_GetWindowSize(window, &window_width, &window_height);
+    int max = (int) (window_width - (window_width * 0.10));
+
+    int ceilBuildHeight = (int) (window_height*0.1);
+    int totalBuildingHeight = window_height - ceilBuildHeight;
+    int lastFloor = (totalBuildingHeight/ (*difficulty*3)) + ceilBuildHeight;
+
+    chest->type = CHEST;
+    chest->part.chest.position.x = 0;
+    chest->part.chest.position.y = 0;
+    chest->part.chest.size.height = 0;
+    chest->part.chest.size.width = 0;
+
+    addElementToChainList(chest, interactiveList);
+}
 
 // ------------------------------------------ //
 
@@ -160,42 +184,46 @@ void drawButtons(SDL_Renderer * renderer, InteractivePart *part){
 }
 
 
-int drawChest(SDL_Window *window, SDL_Renderer *renderer, const int * difficulty) {
+int drawChest(SDL_Window *window, SDL_Renderer *renderer, const int * difficulty, InteractivePart *part) {
 
     SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, imageChest);
     if(imageTexture == NULL){
         return 1;
     }
 
-    int imageWidth;
-    int imageHeight;
-    SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
+    if(part->part.chest.size.width == 0) {
+
+        int imageWidth;
+        int imageHeight;
+        SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
+
+
+        imageWidth = imageWidth / (*difficulty + 2);
+        imageHeight = imageHeight / (*difficulty + 2);
+
+        part->part.chest.size.width = imageWidth;
+        part->part.chest.size.height = imageHeight;
+
+
+        int window_width;
+        int window_height;
+
+        SDL_GetWindowSize(window, &window_width, &window_height);
+        int max = (int) (window_width - (window_width * 0.10));
+
+        int ceilBuildHeight = (int) (window_height * 0.1);
+        int totalBuildingHeight = window_height - ceilBuildHeight;
+        int lastFloor = (totalBuildingHeight / (*difficulty * 3)) + ceilBuildHeight;
+
+        part->part.chest.position.x =  max-imageWidth;
+        part->part.chest.position.y = lastFloor-imageHeight;
+    }
 
     SDL_Rect dstRect;
-    imageWidth = imageWidth/ (*difficulty+2);
-    imageHeight = imageHeight/ (*difficulty+2);
-    dstRect.w = imageWidth;
-    dstRect.h = imageHeight;
-
-    int window_width;
-    int window_height;
-
-    SDL_GetWindowSize(window, &window_width, &window_height);
-    int max = (int) (window_width - (window_width * 0.10));
-
-    int ceilBuildHeight = (int) (window_height*0.1);
-    int totalBuildingHeight = window_height - ceilBuildHeight;
-    int lastFloor = (totalBuildingHeight/ (*difficulty*3)) + ceilBuildHeight;
-
-
-
-//    int deltaBaseCeil = (int) (window_height*0.1);
-//
-//    //int maxI = *difficulty * 3;
-//    //baseDmHeight = baseDmHeight + ((window_height / (maxI)) * (maxI));
-//
-    dstRect.x = max-imageWidth;
-    dstRect.y = lastFloor-imageHeight;
+    dstRect.w = part->part.chest.size.width;
+    dstRect.h = part->part.chest.size.height;
+    dstRect.x =  part->part.chest.position.x;
+    dstRect.y =  part->part.chest.position.y;
 
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
 }
@@ -301,6 +329,11 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
                 SDL_Log("Interactive Type: Electric Meter\n");
                 break;
 
+            case CHEST:
+                SDL_Log("Interactive Type: Chest\n");
+                drawChest(window, renderer, difficulty, &list->interactivePart);
+                break;
+
             default:
                 SDL_Log("Interactive Type: Unknown\n");
         }
@@ -309,14 +342,12 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
         element++;
     }
 
-    drawChest(window, renderer, difficulty);
-
 
 }
 
 // ------------------------------------------------ //
 
-void interactWithPart(InteractiveList * interactiveList, Player * player){
+void interactWithPart(InteractiveList * interactiveList, Player * player, int * menuState){
     int min;
     int max;
     int partX;
@@ -385,12 +416,19 @@ void interactWithPart(InteractiveList * interactiveList, Player * player){
                 SDL_Log("Interactive Type: Electric Meter\n");
                 break;
 
+            case CHEST:
+                SDL_Log("Interactive Type: Chest\n");
+                Chest chest = interactiveList->interactivePart.part.chest;
+                if(player->coordinates.x >= chest.position.x && player->coordinates.y <= chest.position.y+chest.size.height){
+                    *menuState = 1;
+                }
+
+                break;
+
             default:
                 SDL_Log("Interactive Type: Unknown\n");
         }
         // Passer à l'élément suivant dans la liste
         interactiveList = (InteractiveList *) interactiveList->next;
-
-        //SDL_Delay(500);
     }
 }
