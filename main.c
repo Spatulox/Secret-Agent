@@ -172,39 +172,40 @@ int main(int argc, char** argv) {
                 }
 
             }
+            else if (event.type == SDL_KEYDOWN && menuState == 3) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_z:
+                        SDL_RenderClear(renderer);
+                        interactWithPart(interactiveList, &playerInfos);
+                        drawBuilding(renderer, &build, &dm, &difficulty);
+                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        drawPlayer(renderer, dm, &playerInfos);
+                        Log("Touche Z !");
+                        break;
 
-            // Get the keyboard click
-            const Uint8 *state = SDL_GetKeyboardState(NULL);
-            if(menuState == 3){
-                if (state[SDL_SCANCODE_W])
-                {
-                    Log("Touche Z !");
-                }
-                else if (state[SDL_SCANCODE_S])
-                {
-                    Log("Touche S !");
-                }
-                else if (state[SDL_SCANCODE_D])
-                {
-                    SDL_RenderClear(renderer);
-                    drawBuilding(renderer, &build, &dm, &difficulty);
-                    drawInteractiveParts(renderer, interactiveList, &difficulty);
-                    rightPlayer(renderer, dm, &playerInfos);
-                    SDL_Delay(70);
-                }
-                else if (state[SDL_SCANCODE_A])
-                {
-                    SDL_RenderClear(renderer);
-                    drawBuilding(renderer, &build, &dm, &difficulty);
-                    drawInteractiveParts(renderer, interactiveList, &difficulty);
-                    leftPlayer(renderer, dm, &playerInfos);
-                    SDL_Delay(70);
-                }
-            }
+                    case SDLK_s:
 
-            // Return to the mainMenu
-            if (state[SDL_SCANCODE_SEMICOLON]) {
-                menuState = 0;
+                        break;
+
+                    case SDLK_d:
+                        SDL_RenderClear(renderer);
+                        drawBuilding(renderer, &build, &dm, &difficulty);
+                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        rightPlayer(renderer, dm, &playerInfos);
+                        SDL_Delay(70);
+                        break;
+
+                    case SDLK_q:
+                        SDL_RenderClear(renderer);
+                        drawBuilding(renderer, &build, &dm, &difficulty);
+                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        leftPlayer(renderer, dm, &playerInfos);
+                        SDL_Delay(70);
+                        break;
+
+                    case SDLK_m:
+                        menuState = 0;
+                }
             }
         }
 
