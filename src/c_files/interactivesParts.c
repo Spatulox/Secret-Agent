@@ -132,7 +132,6 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
     if(*interactiveList != NULL){
         Log("Refreshing Interactiv list");
         freeChainList(interactiveList);
-        //*interactiveList = NULL;
     }
 
     for (int i = 0; i < ((*difficulty)*3)-1; ++i) {
