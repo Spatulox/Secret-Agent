@@ -14,6 +14,7 @@
 // Global Var //
 SDL_Surface* imageSurfaceUpStairs = NULL;
 SDL_Surface* imageSurfaceDownStairs = NULL;
+SDL_Surface* imageChest = NULL;
 
 
 
@@ -26,7 +27,6 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
     if(partUpStairs == NULL){
         Log("Impossible to reserve the data");
         freeChainList(interactiveList);
-        //*interactiveList = NULL;
         return 1;
     }
 
@@ -35,7 +35,6 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
     if(partDownStairs == NULL){
         Log("Impossible to reserve the data");
         freeChainList(interactiveList);
-        //*interactiveList = NULL;
         return 1;
     }
 
@@ -43,7 +42,7 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
     int window_width, window_height;
     SDL_GetWindowSize(window, &window_width, &window_height);
     //int random_number = rand() % (window_width + 1);
-    int max = window_width - window_width * 0.2;
+    int max = window_width - window_width * 0.3;
     int min = 0 + window_width * 0.2;
     int random_number = min + rand() % (max - min + 1);
 
@@ -121,6 +120,8 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
     if(imageSurfaceDownStairs == NULL){
         imageSurfaceUpStairs = IMG_Load("./icons/upStairs.png");
         imageSurfaceDownStairs = IMG_Load("./icons/downStairs.png");
+        imageChest = IMG_Load("./icons/chest.png");
+
     }
 
     if(interactiveList == NULL){
@@ -144,7 +145,7 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
 
     }
     //printInteractiveList(interactiveList);
-    drawInteractiveParts(renderer, *interactiveList, difficulty);
+    drawInteractiveParts(window, renderer, *interactiveList, difficulty);
 
     return 0;
 }
@@ -158,6 +159,48 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
 void drawButtons(SDL_Renderer * renderer, InteractivePart *part){
 
 }
+
+
+int drawChest(SDL_Window *window, SDL_Renderer *renderer, const int * difficulty) {
+
+    SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, imageChest);
+    if(imageTexture == NULL){
+        return 1;
+    }
+
+    int imageWidth;
+    int imageHeight;
+    SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
+
+    SDL_Rect dstRect;
+    imageWidth = imageWidth/ (*difficulty+2);
+    imageHeight = imageHeight/ (*difficulty+2);
+    dstRect.w = imageWidth;
+    dstRect.h = imageHeight;
+
+    int window_width;
+    int window_height;
+
+    SDL_GetWindowSize(window, &window_width, &window_height);
+    int max = (int) (window_width - (window_width * 0.10));
+
+    int ceilBuildHeight = (int) (window_height*0.1);
+    int totalBuildingHeight = window_height - ceilBuildHeight;
+    int lastFloor = (totalBuildingHeight/ (*difficulty*3)) + ceilBuildHeight;
+
+
+
+//    int deltaBaseCeil = (int) (window_height*0.1);
+//
+//    //int maxI = *difficulty * 3;
+//    //baseDmHeight = baseDmHeight + ((window_height / (maxI)) * (maxI));
+//
+    dstRect.x = max-imageWidth;
+    dstRect.y = lastFloor-imageHeight;
+
+    SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
+}
+
 
 // ------------------------------------------------ //
 
@@ -185,7 +228,7 @@ void drawDoors(){
 
 // ------------------------------------------------ //
 
-int drawStairs(SDL_Renderer * renderer, InteractivePart *part, const int * difficulty){
+int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
 
     SDL_Surface* imageSurface = NULL;
 
@@ -195,17 +238,6 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part, const int * diffi
     else{
         imageSurface = imageSurfaceDownStairs;
     }
-
-    // Not optimized part, te load the image every boucle so bruh
-    // Replaced it with a global var
-    /*
-    if(part->part.stairs.upDownStairs == 1){
-        imageSurface = IMG_Load("./icons/upStairs.png");
-    }
-    else{
-        imageSurface = IMG_Load("./icons/downStairs.png");
-    }
-     */
 
     if(imageSurface == NULL){
         Log("Impossible to load the stair texture");
@@ -235,7 +267,7 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part, const int * diffi
 
 // ------------------------------------------------ //
 
-void drawInteractiveParts(SDL_Renderer * renderer, InteractiveList *list, const int * difficulty){
+void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, InteractiveList *list, const int * difficulty){
 
     Log("drawInteractiveParts");
     int element;
@@ -250,7 +282,7 @@ void drawInteractiveParts(SDL_Renderer * renderer, InteractiveList *list, const 
 
             case STAIRS:
                 //SDL_Log("Interactive Type: Stairs\n");
-                drawStairs(renderer, &list->interactivePart, difficulty);
+                drawStairs(renderer, &list->interactivePart);
                 break;
 
             case CODE:
@@ -277,6 +309,8 @@ void drawInteractiveParts(SDL_Renderer * renderer, InteractiveList *list, const 
         list = (InteractiveList *)list->next;
         element++;
     }
+
+    drawChest(window, renderer, difficulty);
 
 
 }

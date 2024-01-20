@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
                         SDL_RenderClear(renderer);
                         interactWithPart(interactiveList, &playerInfos);
                         drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        drawInteractiveParts(window, renderer, interactiveList, &difficulty);
                         drawPlayer(renderer, dm, &playerInfos);
                         Log("Touche Z !");
                         break;
@@ -190,7 +190,7 @@ int main(int argc, char** argv) {
                     case SDLK_d:
                         SDL_RenderClear(renderer);
                         drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        drawInteractiveParts(window, renderer, interactiveList, &difficulty);
                         rightPlayer(renderer, dm, &playerInfos);
                         SDL_Delay(70);
                         break;
@@ -198,7 +198,7 @@ int main(int argc, char** argv) {
                     case SDLK_q:
                         SDL_RenderClear(renderer);
                         drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        drawInteractiveParts(window, renderer, interactiveList, &difficulty);
                         leftPlayer(renderer, dm, &playerInfos);
                         SDL_Delay(70);
                         break;
