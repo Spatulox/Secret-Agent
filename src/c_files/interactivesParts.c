@@ -17,6 +17,105 @@ SDL_Surface* imageSurfaceDownStairs = NULL;
 
 
 
+
+// ------------ CREATE FUNCTIONS ------------ //
+
+int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** interactiveList, int i){
+    InteractivePart * partUpStairs = malloc(sizeof(InteractivePart));
+
+    if(partUpStairs == NULL){
+        Log("Impossible to reserve the data");
+        freeChainList(interactiveList);
+        //*interactiveList = NULL;
+        return 1;
+    }
+
+    InteractivePart * partDownStairs = malloc(sizeof(InteractivePart));
+
+    if(partDownStairs == NULL){
+        Log("Impossible to reserve the data");
+        freeChainList(interactiveList);
+        //*interactiveList = NULL;
+        return 1;
+    }
+
+    // Take the width / height of the window
+    int window_width, window_height;
+    SDL_GetWindowSize(window, &window_width, &window_height);
+    //int random_number = rand() % (window_width + 1);
+    int max = window_width - window_width * 0.2;
+    int min = 0 + window_width * 0.2;
+    int random_number = min + rand() % (max - min + 1);
+
+    // Height of the building ceiling
+    double baseDmHeight = window_height*0.1;
+    int deltaBaseCeil = window_height - baseDmHeight;
+
+    // Determine automatic position of the stairs
+    // Determine the number of floors
+    int maxI = *difficulty * 3;
+
+    // Super scientist calcul to determine the y of the floor of the building.
+    //(int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i))
+    // We add +1 to i because i begin at 0.
+
+    int heightOfFloorDownS = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+2));
+    int heightOfFloorUpS = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+1));
+    //SDL_Log("%d", heightOfFloorDownS);
+    int heightOfStairs = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+3)) - heightOfFloorDownS;
+    //SDL_Log("%d", heightOfStairs);
+
+
+    // Create the upstairs (up)
+    partUpStairs->type = STAIRS;
+    partUpStairs->part.stairs.upDownStairs = 1;
+    partUpStairs->part.stairs.linkStairs = 0;
+
+    // Create the downstairs (down)
+    partDownStairs->type = STAIRS;
+    partDownStairs->part.stairs.upDownStairs = 0;
+    partDownStairs->part.stairs.linkStairs = 0;
+
+    // Determine position
+    // up stair
+    partUpStairs->part.stairs.position.x = random_number;
+    partUpStairs->part.stairs.position.y = heightOfFloorUpS-heightOfStairs;
+    //partUpStairs->part.stairs.size.width = random_number;
+    partUpStairs->part.stairs.size.height = heightOfStairs;
+
+    // down stair
+    partDownStairs->part.stairs.position.x = random_number;
+    partDownStairs->part.stairs.position.y = heightOfFloorDownS-heightOfStairs;
+
+    //part->part.stairs.position.y-part->part.stairs.size.height;
+
+    //partDownStairs->part.stairs.size.width = random_number;
+    partDownStairs->part.stairs.size.height = heightOfStairs;
+
+    // Link the two stairs
+    partUpStairs->part.stairs.linkStairs = (struct Stairs *) &partDownStairs->part.stairs;
+    partDownStairs->part.stairs.linkStairs = (struct Stairs *) &partUpStairs->part.stairs;
+
+
+    // Retrieve infos from the pointer inside the struct of the first stairs
+    //Stairs * tmp = (Stairs *) partDownStairs->part.stairs.linkStairs;
+    //SDL_Log("part up stairs struct %d", tmp->upDownStairs);
+    //SDL_Log("part down stairs %p", &partDownStairs);
+    //SDL_Log("part down stairs struct%p", &partDownStairs->part.stairs);
+
+    //SDL_Log("%d", *partUpStairs->part.stairs.linkStairs);
+
+
+    addElementToChainList(partUpStairs, interactiveList);
+    addElementToChainList(partDownStairs, interactiveList);
+}
+
+// ------------------------------------------ //
+
+
+
+// ------------------------------------------ //
+
 int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer * renderer, InteractiveList ** interactiveList){
 
     if(imageSurfaceDownStairs == NULL){
@@ -39,90 +138,7 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
 
         // ------- Stairs ------- //
 
-        InteractivePart * partUpStairs = malloc(sizeof(InteractivePart));
-
-        if(partUpStairs == NULL){
-            Log("Impossible to reserve the data");
-            freeChainList(interactiveList);
-            //*interactiveList = NULL;
-            return 1;
-        }
-
-        InteractivePart * partDownStairs = malloc(sizeof(InteractivePart));
-
-        if(partDownStairs == NULL){
-            Log("Impossible to reserve the data");
-            freeChainList(interactiveList);
-            //*interactiveList = NULL;
-            return 1;
-        }
-
-        // Take the width / height of the window
-        int window_width, window_height;
-        SDL_GetWindowSize(window, &window_width, &window_height);
-        //int random_number = rand() % (window_width + 1);
-        int max = window_width - window_width * 0.1;
-        int min = 0 + window_width * 0.2;
-        int random_number = min + rand() % (max - min + 1);
-
-        // Height of the building ceiling
-        double baseDmHeight = window_height*0.1;
-        int deltaBaseCeil = window_height - baseDmHeight;
-
-        // Determine automatic position of the stairs
-        // Determine the number of floors
-        int maxI = *difficulty * 3;
-
-        // Super scientist calcul to determine the y of the floor of the building.
-        //(int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i))
-        // We add +1 to i because i begin at 0.
-
-        int heightOfFloorDownS = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+2));
-        int heightOfFloorUpS = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+1));
-        //SDL_Log("%d", heightOfFloorDownS);
-        int heightOfStairs = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+3)) - heightOfFloorDownS;
-        //SDL_Log("%d", heightOfStairs);
-
-
-        // Create the upstairs (up)
-        partUpStairs->type = STAIRS;
-        partUpStairs->part.stairs.upDownStairs = 1;
-        partUpStairs->part.stairs.linkStairs = 0;
-
-        // Create the downstairs (down)
-        partDownStairs->type = STAIRS;
-        partDownStairs->part.stairs.upDownStairs = 0;
-        partDownStairs->part.stairs.linkStairs = 0;
-
-        // Determine position
-        // up stair
-        partUpStairs->part.stairs.position.x = random_number;
-        partUpStairs->part.stairs.position.y = heightOfFloorUpS;
-        //partUpStairs->part.stairs.size.width = random_number;
-        partUpStairs->part.stairs.size.height = heightOfStairs;
-
-        // down stair
-        partDownStairs->part.stairs.position.x = random_number;
-        partDownStairs->part.stairs.position.y = heightOfFloorDownS;
-        //partDownStairs->part.stairs.size.width = random_number;
-        partDownStairs->part.stairs.size.height = heightOfStairs;
-
-        // Link the two stairs
-        partUpStairs->part.stairs.linkStairs = (struct Stairs *) &partDownStairs->part.stairs;
-        partDownStairs->part.stairs.linkStairs = (struct Stairs *) &partUpStairs->part.stairs;
-
-
-        // Retrieve infos from the pointer inside the struct of the first stairs
-        //Stairs * tmp = (Stairs *) partDownStairs->part.stairs.linkStairs;
-        //SDL_Log("part up stairs struct %d", tmp->upDownStairs);
-        //SDL_Log("part down stairs %p", &partDownStairs);
-        //SDL_Log("part down stairs struct%p", &partDownStairs->part.stairs);
-
-        //SDL_Log("%d", *partUpStairs->part.stairs.linkStairs);
-
-
-        addElementToChainList(partUpStairs, interactiveList);
-        addElementToChainList(partDownStairs, interactiveList);
+        createStairs(window, difficulty, interactiveList, i);
 
         // ------- Buttons ------- //
 
@@ -133,7 +149,11 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
     return 0;
 }
 
-// ------------------------------------------------ //
+
+
+
+
+// ------------ DRAW FUNCTIONS ------------ //
 
 void drawButtons(SDL_Renderer * renderer, InteractivePart *part){
 
@@ -205,8 +225,9 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part, const int * diffi
     dstRect.w = imageWidth;
     dstRect.h = part->part.stairs.size.height;
 
-    dstRect.x = part->part.stairs.position.x-imageWidth;
-    dstRect.y = part->part.stairs.position.y-part->part.stairs.size.height;
+    part->part.stairs.size.width = imageWidth;
+    dstRect.x = part->part.stairs.position.x;
+    dstRect.y = part->part.stairs.position.y;
 
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
 
@@ -228,7 +249,7 @@ void drawInteractiveParts(SDL_Renderer * renderer, InteractiveList *list, const 
                 break;
 
             case STAIRS:
-                SDL_Log("Interactive Type: Stairs\n");
+                //SDL_Log("Interactive Type: Stairs\n");
                 drawStairs(renderer, &list->interactivePart, difficulty);
                 break;
 
@@ -258,4 +279,85 @@ void drawInteractiveParts(SDL_Renderer * renderer, InteractiveList *list, const 
     }
 
 
+}
+
+// ------------------------------------------------ //
+
+void interactWithPart(InteractiveList * interactiveList, Player * player){
+    int min;
+    int max;
+    int partX;
+    int partY;
+    int thingHeight;
+
+    // Var to avoid multiple floor change
+    int changeFloor = 0;
+
+    if(interactiveList == NULL){
+        Log("No chain list :/");
+    }
+    while (interactiveList != NULL){
+        switch (interactiveList->interactivePart.type) {
+            case BUTTON:
+                                SDL_Log("Interactive Type: Button\n");
+                break;
+
+            case STAIRS:
+
+                // Calcul x of the stairs
+                partX = interactiveList->interactivePart.part.stairs.position.x;
+                partY = interactiveList->interactivePart.part.stairs.position.y;
+                max = partX + (interactiveList->interactivePart.part.stairs.size.width - interactiveList->interactivePart.part.stairs.size.width*0.5);
+                min = partX - (interactiveList->interactivePart.part.stairs.size.width*0.2 + interactiveList->interactivePart.part.stairs.size.width*0.2);
+
+                // Delta
+                // Take the y of the stair + size y of the stair - height of the player to compare the result with the y of the player
+                thingHeight = interactiveList->interactivePart.part.stairs.size.height;
+                int tmp = (int)(thingHeight + partY) - player->size.height;
+
+                // Next to a stair
+                // check x of the stair and player
+                // check the y of the player and the stairs
+                if(player->coordinates.x >= min && player->coordinates.x <= max && tmp == player->coordinates.y){
+
+                    Stairs * nextStairs = (Stairs *) interactiveList->interactivePart.part.stairs.linkStairs;
+
+                    if(changeFloor == 0 && interactiveList->interactivePart.part.stairs.upDownStairs == 0){
+                        player->coordinates.y = partY - player->size.height;
+                        changeFloor = 1;
+                    }
+                    else if(changeFloor == 0 && interactiveList->interactivePart.part.stairs.upDownStairs == 1){
+                        player->coordinates.y = nextStairs->position.y + (nextStairs->size.height - player->size.height);
+                        changeFloor = 1;
+                    }
+
+                }
+
+                //SDL_Log("Interactive Type: Stairs\n");
+                break;
+
+            case CODE:
+                SDL_Log("Interactive Type: Code\n");
+                break;
+
+            case LIFT:
+                SDL_Log("Interactive Type: Lift\n");
+                break;
+
+            case DOOR:
+                SDL_Log("Interactive Type: Door\n");
+                break;
+
+            case ELECTRIC_METER:
+                SDL_Log("Interactive Type: Electric Meter\n");
+                break;
+
+            default:
+                SDL_Log("Interactive Type: Unknown\n");
+        }
+        // Passer à l'élément suivant dans la liste
+        interactiveList = (InteractiveList *) interactiveList->next;
+
+        //SDL_Delay(500);
+    }
 }
