@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "../includes/interactivesStruct.h"
 #include "../includes/global_functions.h"
@@ -15,6 +16,9 @@
 SDL_Surface* imageSurfaceUpStairs = NULL;
 SDL_Surface* imageSurfaceDownStairs = NULL;
 SDL_Surface* imageChest = NULL;
+SDL_Surface* imageActiveButton = NULL;
+SDL_Surface* imageUnactiveButton = NULL;
+
 
 
 
@@ -45,11 +49,10 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
     int max = window_width - window_width * 0.3;
     int min = 0 + window_width * 0.2;
 
+    // Take a random number and verifi it to not print another stairs on an another stair
     int random_number;
     do{
-        SDL_Log("While");
         random_number = min + rand() % (max - min + 1);
-        SDL_Log("--%d", random_number);
     }while( (random_number >= *lastXStairs && random_number <= *lastXStairs + 120 ) || (random_number+120 >= *lastXStairs && random_number+120 <= *lastXStairs+120) ) ;
     *lastXStairs = random_number;
 
@@ -132,9 +135,14 @@ int createChest(SDL_Window *window, InteractiveList ** interactiveList, const in
     SDL_GetWindowSize(window, &window_width, &window_height);
     int max = (int) (window_width - (window_width * 0.10));
 
-    int ceilBuildHeight = (int) (window_height*0.1);
-    int totalBuildingHeight = window_height - ceilBuildHeight;
-    int lastFloor = (totalBuildingHeight/ (*difficulty*3)) + ceilBuildHeight;
+    //int ceilBuildHeight = (int) (window_height*0.1);
+    //int totalBuildingHeight = window_height - ceilBuildHeight;
+    //int lastFloor = (totalBuildingHeight/ (*difficulty*3)) + ceilBuildHeight;
+    int lastFloor = getLastFloorGround(&window_height, difficulty);
+    if(lastFloor == -1){
+        Log("Impossible to calculate the lastFloor ground");
+        return 1;
+    }
 
     chest->type = CHEST;
     chest->part.chest.position.x = 0;
@@ -147,12 +155,70 @@ int createChest(SDL_Window *window, InteractiveList ** interactiveList, const in
 
 // ------------------------------------------ //
 
+int createDoorsAndButtons(SDL_Window *window, const int * difficulty, InteractiveList ** interactiveList){
+    int random_number;
+    srand((unsigned int) time(NULL)); // Initialisation de la graine pour la fonction rand
+    random_number = (rand() % (*difficulty*2)) + 1;
+
+    if(random_number <= 4){
+
+        // Create Buttons and doors
+        for (int i = 0; i < random_number; ++i) {
+            // Create Button
+
+            InteractivePart * button = malloc(sizeof(InteractivePart));
+
+            if(button != NULL){
+                button->type = BUTTON;
+                button->part.button.active = 0;
+                button->part.button.position.x = 0;
+                button->part.button.position.y = 0;
+                //button->part.button.activeThing = NULL;
+
+
+                InteractivePart * activePart = malloc(sizeof(InteractivePart));
+
+                if(activePart == NULL) {
+                    free(button);
+                }
+                else{
+                    //if(random_number <= 2){
+                        activePart->type = DOOR;
+                        activePart->part.door.active = 0;
+                        activePart->part.door.position.x = 0;
+                        activePart->part.door.position.y = 0;
+                    //}
+                    //else{
+//                        activePart->type = LIFT;
+//                        activePart->part.door.active = 0;
+//                        activePart->part.door.position.x = 0;
+//                        activePart->part.door.position.y = 0;
+                    //}
+
+                    button->part.button.activeThing = (struct InteractivePart *) activePart;
+                    addElementToChainList(activePart, interactiveList);
+                    addElementToChainList(button, interactiveList);
+                }
+            }
+
+        }
+        //printInteractiveList(*interactiveList);
+    }
+    else{
+        Log("No Doors");
+    }
+}
+
+// ------------------------------------------ //
+
 int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer * renderer, InteractiveList ** interactiveList){
 
     if(imageSurfaceDownStairs == NULL){
         imageSurfaceUpStairs = IMG_Load("./icons/upStairs.png");
         imageSurfaceDownStairs = IMG_Load("./icons/downStairs.png");
         imageChest = IMG_Load("./icons/chest.png");
+        imageActiveButton = IMG_Load("./icons/activeButton.png");
+        imageUnactiveButton = IMG_Load("./icons/unactiveButton.png");
 
     }
 
@@ -162,7 +228,7 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
     }
 
     if(*interactiveList != NULL){
-        Log("Refreshing Interactiv list");
+        Log("Refreshing Interactive list");
         freeChainList(interactiveList);
     }
     int lastXStairs = 0;
@@ -177,6 +243,9 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
     createChest(window, interactiveList, difficulty);
 
     // ------- Buttons ------- //
+    createDoorsAndButtons(window, difficulty, interactiveList);
+
+
     //printInteractiveList(interactiveList);
     drawInteractiveParts(window, renderer, *interactiveList, difficulty);
 
@@ -189,8 +258,60 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
 
 // ------------ DRAW FUNCTIONS ------------ //
 
-void drawButtons(SDL_Renderer * renderer, InteractivePart *part){
+int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *part, const int * difficulty, int * buttonFloor){
 
+
+    SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, imageChest);
+
+    if(part->part.button.active == 1){
+        imageTexture = SDL_CreateTextureFromSurface(renderer, imageActiveButton);
+    }
+    else{
+        imageTexture = SDL_CreateTextureFromSurface(renderer, imageUnactiveButton);
+    }
+
+    if(imageTexture == NULL){
+        return 1;
+    }
+
+    int imageWidth;
+    int imageHeight;
+    SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
+
+    if(part->part.button.position.x == 0) {
+
+        int window_width;
+        int window_height;
+
+        SDL_GetWindowSize(window, &window_width, &window_height);
+        int lastFloorGround = getLastFloorGround(&window_height, difficulty);
+
+        if(lastFloorGround == -1){
+            Log("Impossible to calculate the lastFloor ground");
+            return 1;
+        }
+
+        int min = 0 + window_width * 0.2;
+        int max = (int)(window_width - window_width * 0.3);
+        int random_number = min + rand() % (max - min + 1);
+
+
+        int heightBetweenFloors = lastFloorGround - (window_height*0.1);
+
+        int floor = window_height*0.2 + heightBetweenFloors* (*buttonFloor);
+
+        part->part.button.position.x = random_number;
+        part->part.button.position.y = window_height*0.2 + (floor - (heightBetweenFloors/2) -imageHeight/2);// - ((lastFloorGround - window_width*0.1)/2);
+
+    }
+
+    SDL_Rect dstRect;
+    dstRect.w = imageWidth;
+    dstRect.h = imageHeight;
+    dstRect.x =  part->part.button.position.x;
+    dstRect.y =  part->part.button.position.y;
+
+    SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
 }
 
 
@@ -221,9 +342,11 @@ int drawChest(SDL_Window *window, SDL_Renderer *renderer, const int * difficulty
         SDL_GetWindowSize(window, &window_width, &window_height);
         int max = (int) (window_width - (window_width * 0.10));
 
-        int ceilBuildHeight = (int) (window_height * 0.1);
-        int totalBuildingHeight = window_height - ceilBuildHeight;
-        int lastFloor = (totalBuildingHeight / (*difficulty * 3)) + ceilBuildHeight;
+        int lastFloor = getLastFloorGround(&window_height, difficulty);
+        if(lastFloor == -1){
+            Log("Impossible to calculate the lastFloor ground");
+            return 1;
+        }
 
         part->part.chest.position.x =  max-imageWidth;
         part->part.chest.position.y = lastFloor-imageHeight;
@@ -260,7 +383,7 @@ void drawLift(){
 // ------------------------------------------------ //
 
 void drawDoors(){
-
+    SDL_Log("Draw Doors");
 }
 
 // ------------------------------------------------ //
@@ -307,19 +430,19 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
 void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, InteractiveList *list, const int * difficulty){
 
     //Log("drawInteractiveParts");
-    int element;
+    int element = 1;
     while (list != NULL) {
         // Imprimer les détails de l'élément interactif en cours
         //SDL_Log("%d", element);
         switch (list->interactivePart.type) {
-            case BUTTON:
-                SDL_Log("Interactive Type: Button\n");
-                drawButtons(renderer, &list->interactivePart);
-                break;
-
             case STAIRS:
                 //SDL_Log("Interactive Type: Stairs\n");
                 drawStairs(renderer, &list->interactivePart);
+                break;
+
+            case BUTTON:
+                SDL_Log("Interactive Type: Button\n");
+                drawButtons(window, renderer, &list->interactivePart, difficulty, &element);
                 break;
 
             case CODE:
@@ -364,6 +487,9 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
     int partY;
     int thingHeight;
 
+    // Why here ?
+    Chest chest;
+
     // Var to avoid multiple floor change
     int changeFloor = 0;
 
@@ -373,7 +499,7 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
     while (interactiveList != NULL){
         switch (interactiveList->interactivePart.type) {
             case BUTTON:
-                SDL_Log("Interactive Type: Button\n");
+                //SDL_Log("Interactive Type: Button\n");
                 break;
 
             case STAIRS:
@@ -411,24 +537,24 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
                 break;
 
             case CODE:
-                SDL_Log("Interactive Type: Code\n");
+                //SDL_Log("Interactive Type: Code\n");
                 break;
 
             case LIFT:
-                SDL_Log("Interactive Type: Lift\n");
+                //SDL_Log("Interactive Type: Lift\n");
                 break;
 
             case DOOR:
-                SDL_Log("Interactive Type: Door\n");
+                //SDL_Log("Interactive Type: Door\n");
                 break;
 
             case ELECTRIC_METER:
-                SDL_Log("Interactive Type: Electric Meter\n");
+                //SDL_Log("Interactive Type: Electric Meter\n");
                 break;
 
             case CHEST:
-                SDL_Log("Interactive Type: Chest\n");
-                Chest chest = interactiveList->interactivePart.part.chest;
+                //SDL_Log("Interactive Type: Chest\n");
+                chest = interactiveList->interactivePart.part.chest;
                 if(player->coordinates.x >= chest.position.x && player->coordinates.y <= chest.position.y+chest.size.height){
                     *menuState = 1;
                 }

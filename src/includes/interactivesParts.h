@@ -9,7 +9,7 @@
 
 int createInteractive(SDL_Window * window, const int * difficulty, SDL_Renderer * renderer, InteractiveList ** interactiveList);
 void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, InteractiveList *list, const int * difficulty);
-void drawButtons(SDL_Renderer * renderer, InteractivePart *part);
+int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *part, const int * difficulty, int * buttonFloor);
 void drawElectricMetter();
 void drawCode();
 void drawLift();

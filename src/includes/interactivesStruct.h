@@ -14,7 +14,7 @@
 typedef struct {
     int active;
     Point position;
-    int * activeThing;
+    struct InteractivePart * activeThing;
 } InGameButton;
 
 
@@ -22,7 +22,7 @@ typedef struct {
 typedef struct {
     int active;
     Point position;
-    int * activeThing;
+    struct InteractivePart * activeThing;
 } ElectricMeter;
 
 
