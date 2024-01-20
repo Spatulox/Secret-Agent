@@ -199,7 +199,13 @@ void executeMusic(SDL_Thread *audio, int *menuState){
             audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
         }
         else{
-            Log("No music for this menu state");
+            Log("No music for this menu state, default music");
+            AudioData *playMenuMusic = malloc(sizeof(AudioData));
+            playMenuMusic->string = "./musics/chillax_un_max.mp3";
+            playMenuMusic->repeat = 5;
+
+            SDL_DetachThread(audio);
+            audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
         }
     }
     // Need to wait but idk why, probably thread interferance or whatever
