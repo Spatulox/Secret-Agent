@@ -49,10 +49,10 @@ int loadPlayer(SDL_Renderer * renderer, SDL_DisplayMode dm, Player * imgInfos, c
     //SDL_Log("%d", imageHeight);
     //SDL_Log("%d", imageWidth);
 
-    dstRect.x = (dm.w)*0.10;
+    dstRect.x = (dm.w)*0.10 + 5;
     dstRect.y = dm.h - imageHeight;
 
-    imgInfos->coordinates.x = (dm.w)*0.10;
+    imgInfos->coordinates.x = (dm.w)*0.10 + 5;
     imgInfos->coordinates.y = dm.h - imageHeight;
     imgInfos->size.height = imageHeight;
     imgInfos->size.width = imageWidth;
