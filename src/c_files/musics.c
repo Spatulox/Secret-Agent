@@ -1,5 +1,5 @@
 //
-// Created by M78st on 17/12/2023.
+// Created by Marc on 17/12/2023.
 //
 
 #include <SDL.h>
@@ -62,7 +62,7 @@ int DoubleAudioThread(void *data) {
         return 0;
     }
 
-    SDL_Log("%d", *(audioData->menuState));
+    //SDL_Log("Saved menu state %d", *(audioData->menuState));
 
     // Free first music
     if (music != NULL){
@@ -157,7 +157,7 @@ int AudioThread(void *data) {
 void executeMusic(SDL_Thread *audio, int *menuState){
 
     //SDL_Log("execute music : %p", menuState);
-    SDL_Log("execute music : %d", *menuState);
+    //SDL_Log("execute music : %d", *menuState);
     SDL_Delay(100);
     if (!Mix_PlayingMusic()) {
         if (*menuState == 0) {
@@ -199,7 +199,13 @@ void executeMusic(SDL_Thread *audio, int *menuState){
             audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
         }
         else{
-            Log("No music for this menu state");
+            Log("No music for this menu state, default music");
+            AudioData *playMenuMusic = malloc(sizeof(AudioData));
+            playMenuMusic->string = "./musics/chillax_un_max.mp3";
+            playMenuMusic->repeat = 5;
+
+            SDL_DetachThread(audio);
+            audio = SDL_CreateThread(AudioThread, "AudioThread", playMenuMusic);
         }
     }
     // Need to wait but idk why, probably thread interferance or whatever

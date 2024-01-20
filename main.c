@@ -10,12 +10,14 @@
 #include "src/includes/interface.h"
 #include "src/includes/musics.h"
 #include "src/includes/building.h"
+#include "src/includes/interactivesParts.h"
 
 // Structures
 #include "src/includes/buttons.h"
 #include "src/includes/menu.h"
 #include "src/includes/player.h"
 #include "src/includes/audioData.h"
+#include "src/includes/interactivesStruct.h"
 
 #include <SDL_image.h>
 
@@ -67,7 +69,7 @@ int main(int argc, char** argv) {
 
 
     // Create the windows icon
-    SDL_Surface* icon = SDL_LoadBMP("../src/icons/icon.bmp");
+    SDL_Surface* icon = SDL_LoadBMP("./icons/icon.bmp");
     if (icon == NULL){
         Log("ERROR : Impossible to create the icon of the game");
     }
@@ -93,11 +95,14 @@ int main(int argc, char** argv) {
 
     // Initialize music
     SDL_Thread *audio = NULL;
-    executeMusic(audio, &menuState);
-    SDL_Delay(100);
+    //executeMusic(audio, &menuState); //useless
+    //SDL_Delay(100);
 
     // Reserved the building var
     Building build;
+
+    // Reserve the InteractivesPart
+    InteractiveList * interactiveList = NULL;
 
     // Main part
     while(isRunning){
@@ -109,6 +114,7 @@ int main(int argc, char** argv) {
         if(lastMenuState != menuState && menuState < 3){
             createMenu(window, renderer, width, height, dm, "./fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
+            executeMusic(audio, &menuState);
         }
 
         // Create the building and load the player
@@ -122,7 +128,15 @@ int main(int argc, char** argv) {
                 destroySDL(window, renderer, NULL);
             }
 
-            if(loadPlayer(renderer, dm, &playerInfos) != 0){
+            if(createInteractive(window, &difficulty, renderer, &interactiveList) != 0){
+                Log("Impossible to create the interactive parts");
+                destroySDL(window, renderer, NULL);
+            }
+            else{
+                printInteractiveList(interactiveList);
+            }
+
+            if(loadPlayer(renderer, dm, &playerInfos, &difficulty) != 0){
                 Log("Impossible to load the player");
                 destroySDL(window, renderer, NULL);
             }
@@ -158,37 +172,40 @@ int main(int argc, char** argv) {
                 }
 
             }
+            else if (event.type == SDL_KEYDOWN && menuState == 3) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_z:
+                        SDL_RenderClear(renderer);
+                        interactWithPart(interactiveList, &playerInfos);
+                        drawBuilding(renderer, &build, &dm, &difficulty);
+                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        drawPlayer(renderer, dm, &playerInfos);
+                        Log("Touche Z !");
+                        break;
 
-            // Get the keyboard click
-            const Uint8 *state = SDL_GetKeyboardState(NULL);
-            if(menuState == 3){
-                if (state[SDL_SCANCODE_W])
-                {
-                    Log("Touche Z !");
-                }
-                else if (state[SDL_SCANCODE_S])
-                {
-                    Log("Touche S !");
-                }
-                else if (state[SDL_SCANCODE_D])
-                {
-                    SDL_RenderClear(renderer);
-                    rightPlayer(renderer, dm, &playerInfos);
-                    drawBuilding(renderer, &build, &dm, &difficulty);
-                    SDL_Delay(80);
-                }
-                else if (state[SDL_SCANCODE_A])
-                {
-                    SDL_RenderClear(renderer);
-                    leftPlayer(renderer, dm, &playerInfos);
-                    drawBuilding(renderer, &build, &dm, &difficulty);
-                    SDL_Delay(80);
-                }
-            }
+                    case SDLK_s:
 
-            // Return to the mainMenu
-            if (state[SDL_SCANCODE_SEMICOLON]) {
-                menuState = 0;
+                        break;
+
+                    case SDLK_d:
+                        SDL_RenderClear(renderer);
+                        drawBuilding(renderer, &build, &dm, &difficulty);
+                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        rightPlayer(renderer, dm, &playerInfos);
+                        SDL_Delay(70);
+                        break;
+
+                    case SDLK_q:
+                        SDL_RenderClear(renderer);
+                        drawBuilding(renderer, &build, &dm, &difficulty);
+                        drawInteractiveParts(renderer, interactiveList, &difficulty);
+                        leftPlayer(renderer, dm, &playerInfos);
+                        SDL_Delay(70);
+                        break;
+
+                    case SDLK_m:
+                        menuState = 0;
+                }
             }
         }
 
@@ -204,6 +221,8 @@ int main(int argc, char** argv) {
     // Log("10 seconds of delay");
     //SDL_RenderPresent(renderer);
     //SDL_Delay(10000);
+
+    freeChainList(&interactiveList);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

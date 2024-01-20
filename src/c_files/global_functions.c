@@ -1,3 +1,6 @@
+
+// Created by Marc
+
 // global_function.c
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +11,7 @@
 #include <SDL_mixer.h>
 
 #include "../includes/global_functions.h"
+#include "../includes/interactivesStruct.h"
 
 // ----------------------------------------------------------- //
 
@@ -87,4 +91,95 @@ long getSize(char *fileName){
     size = ftell(fp);
     fclose(fp);
     return size;
+}
+
+// ----------------------------------------------------------- //
+/*
+int addElementToChainList(InteractivePart newPart, InteractiveList** head) {
+    InteractiveList* new = malloc(sizeof(InteractiveList));
+    if (newPart == NULL) {
+        Log("Impossible to create an element for the chain list");
+        return 1;
+    }
+
+    new->interactivePart = newPart;
+    new->next = *head;
+    *head = new;
+    Log("Element created");
+    return 0;
+}*/
+
+int addElementToChainList(InteractivePart* newPart, InteractiveList** head) {
+    InteractiveList* new = malloc(sizeof(InteractiveList));
+    if (new == NULL) {
+        Log("Impossible to create an element for the chain list");
+        return 1;
+    }
+
+    new->interactivePart = *newPart;
+    new->next = (struct InteractiveList *) *head;
+    *head = new; // Met à jour la tête de liste à l'extérieur de la fonction
+    Log("Element created");
+    return 0;
+}
+// ----------------------------------------------------------- //
+
+void freeChainList(InteractiveList** head) {
+
+    //printInteractiveList(*head);
+
+    InteractiveList* curr = *head;
+    InteractiveList* next;
+
+    while (curr != NULL) {
+        next = (InteractiveList *) curr->next;
+        free(curr);
+        curr = next;
+    }
+
+    *head = NULL;
+    Log("Chain list full free");
+}
+
+// ----------------------------------------------------------- //
+
+void printInteractiveList(InteractiveList *list) {
+    Log("Printing chain list");
+    int element = 0;
+    while (list != NULL) {
+        // Imprimer les détails de l'élément interactif en cours
+        // SDL_Log("%d", element);
+        switch (list->interactivePart.type) {
+            case BUTTON:
+                SDL_Log("Interactive Type: Button\n");
+                break;
+
+            case STAIRS:
+                SDL_Log("Interactive Type: Stairs\n");
+                break;
+
+            case CODE:
+                SDL_Log("Interactive Type: Code\n");
+                break;
+
+            case LIFT:
+                SDL_Log("Interactive Type: Lift\n");
+                break;
+
+            case DOOR:
+                SDL_Log("Interactive Type: Door\n");
+                break;
+
+            case ELECTRIC_METER:
+                SDL_Log("Interactive Type: Electric Meter\n");
+                break;
+
+            default:
+                SDL_Log("Interactive Type: Unknown\n");
+        }
+        // Passer à l'élément suivant dans la liste
+        list = (InteractiveList *)list->next;
+        element++;
+    }
+    Log("Printing Finished !");
 }

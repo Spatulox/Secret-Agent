@@ -1,5 +1,5 @@
 //
-// Created by M78st on 17/01/2024.
+// Created by Marc on 17/01/2024.
 //
 
 #ifndef INTERACTIVESSTRUCT_H
@@ -26,7 +26,7 @@ typedef struct {
 } ElectricMeter;
 
 
-// Electric Meter (compteur electrique)
+// Code (for code doors)
 typedef struct {
     int active;
     Point position;
@@ -54,12 +54,36 @@ typedef struct {
 
 // ------------------------------------------------- //
 
+// Doors to open
+typedef struct {
+    int upDownStairs;
+    Point position;
+    struct Stairs * linkStairs;
+    Size size;
+} Stairs;
+
+// ------------------------------------------------- //
+
+typedef enum {
+    BUTTON,
+    ELECTRIC_METER,
+    CODE,
+    LIFT,
+    DOOR,
+    STAIRS
+} InteractiveType;
+
 // Interactive things
-typedef union {
-    InGameButton button;
-    ElectricMeter electricMeter;
-    Lift lift;
-    Doors door;
+typedef struct {
+    InteractiveType type;
+    union {
+        InGameButton button;
+        ElectricMeter electricMeter;
+        Code code;
+        Lift lift;
+        Doors door;
+        Stairs stairs;
+    } part;
 } InteractivePart;
 
 // ------------------------------------------------- //
@@ -67,7 +91,7 @@ typedef union {
 // Chain list to store interactive part in game.
 typedef struct {
     InteractivePart interactivePart;
-    int * next
+    struct InteractiveList * next;
 } InteractiveList;
 
 #endif //INTERACTIVESSTRUCT_H

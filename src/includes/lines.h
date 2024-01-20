@@ -1,5 +1,5 @@
 //
-// Created by M78st on 16/01/2024.
+// Created by Marc on 16/01/2024.
 //
 
 #ifndef LINES_H
