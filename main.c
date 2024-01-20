@@ -203,8 +203,20 @@ int main(int argc, char** argv) {
                         SDL_Delay(70);
                         break;
 
+                    default:
+                        break;
+                }
+            }
+            else{
+                switch (event.key.keysym.sym) {
                     case SDLK_m:
                         menuState = 0;
+                        break;
+                    case SDLK_r:
+                        menuState = 1;
+                        break;
+                    default:
+                        break;
                 }
             }
         }
