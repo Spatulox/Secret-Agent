@@ -119,7 +119,7 @@ int addElementToChainList(InteractivePart* newPart, InteractiveList** head) {
     new->interactivePart = *newPart;
     new->next = (struct InteractiveList *) *head;
     *head = new; // Met à jour la tête de liste à l'extérieur de la fonction
-    Log("Element created");
+    //Log("Element created");
     return 0;
 }
 // ----------------------------------------------------------- //

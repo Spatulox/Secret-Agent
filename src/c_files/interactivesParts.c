@@ -21,7 +21,7 @@ SDL_Surface* imageChest = NULL;
 
 // ------------ CREATE FUNCTIONS ------------ //
 
-int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** interactiveList, int i){
+int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** interactiveList, int i, int * lastXStairs){
     InteractivePart * partUpStairs = malloc(sizeof(InteractivePart));
 
     if(partUpStairs == NULL){
@@ -44,7 +44,15 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
     //int random_number = rand() % (window_width + 1);
     int max = window_width - window_width * 0.3;
     int min = 0 + window_width * 0.2;
-    int random_number = min + rand() % (max - min + 1);
+
+    int random_number;
+    do{
+        SDL_Log("While");
+        random_number = min + rand() % (max - min + 1);
+        SDL_Log("--%d", random_number);
+    }while( (random_number >= *lastXStairs && random_number <= *lastXStairs + 120 ) || (random_number+120 >= *lastXStairs && random_number+120 <= *lastXStairs+120) ) ;
+    *lastXStairs = random_number;
+
 
     // Height of the building ceiling
     double baseDmHeight = window_height*0.1;
@@ -157,16 +165,18 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
         Log("Refreshing Interactiv list");
         freeChainList(interactiveList);
     }
-
+    int lastXStairs = 0;
     for (int i = 0; i < ((*difficulty)*3)-1; ++i) {
 
         // ------- Stairs ------- //
 
-        createStairs(window, difficulty, interactiveList, i);
-
-        // ------- Buttons ------- //
-
+        createStairs(window, difficulty, interactiveList, i, &lastXStairs);
     }
+
+    // ------- Chest ------- //
+    createChest(window, interactiveList, difficulty);
+
+    // ------- Buttons ------- //
     //printInteractiveList(interactiveList);
     drawInteractiveParts(window, renderer, *interactiveList, difficulty);
 
@@ -296,7 +306,7 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
 
 void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, InteractiveList *list, const int * difficulty){
 
-    Log("drawInteractiveParts");
+    //Log("drawInteractiveParts");
     int element;
     while (list != NULL) {
         // Imprimer les détails de l'élément interactif en cours
@@ -363,7 +373,7 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
     while (interactiveList != NULL){
         switch (interactiveList->interactivePart.type) {
             case BUTTON:
-                                SDL_Log("Interactive Type: Button\n");
+                SDL_Log("Interactive Type: Button\n");
                 break;
 
             case STAIRS:
@@ -371,7 +381,7 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
                 // Calcul x of the stairs
                 partX = interactiveList->interactivePart.part.stairs.position.x;
                 partY = interactiveList->interactivePart.part.stairs.position.y;
-                max = partX + (interactiveList->interactivePart.part.stairs.size.width - interactiveList->interactivePart.part.stairs.size.width*0.5);
+                max = partX + (interactiveList->interactivePart.part.stairs.size.width - interactiveList->interactivePart.part.stairs.size.width*0.2);
                 min = partX - (interactiveList->interactivePart.part.stairs.size.width*0.2 + interactiveList->interactivePart.part.stairs.size.width*0.2);
 
                 // Delta
