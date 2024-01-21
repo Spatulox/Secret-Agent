@@ -142,7 +142,7 @@ void freeChainList(InteractiveList** head) {
 // ----------------------------------------------------------- //
 
 void printInteractiveList(InteractiveList *list) {
-    Log("Printing chain list");
+    SDL_Log("Printing chain list");
     int element = 0;
     while (list != NULL) {
         // Imprimer les détails de l'élément interactif en cours
@@ -183,5 +183,5 @@ void printInteractiveList(InteractiveList *list) {
         list = (InteractiveList *)list->next;
         element++;
     }
-    Log("Printing Finished !");
+    SDL_Log("Printing Finished !");
 }

@@ -58,7 +58,7 @@ int DoubleAudioThread(void *data) {
         Mix_PlayMusic(music1, audioData->repeat1);
     }
     else{
-        Log("Wrong menu State");
+        Log("Wrong menu State, stopping music");
         return 0;
     }
 

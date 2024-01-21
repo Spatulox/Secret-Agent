@@ -26,6 +26,9 @@ SDL_Surface* imageUnactiveButton = NULL;
 // ------------ CREATE FUNCTIONS ------------ //
 
 int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** interactiveList, int i, int * lastXStairs){
+
+    Log("Creating Stairs");
+
     InteractivePart * partUpStairs = malloc(sizeof(InteractivePart));
 
     if(partUpStairs == NULL){
@@ -118,11 +121,15 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
 
     addElementToChainList(partUpStairs, interactiveList);
     addElementToChainList(partDownStairs, interactiveList);
+
+    return 0;
 }
 
 // ------------------------------------------ //
 
 int createChest(SDL_Window *window, InteractiveList ** interactiveList, const int * difficulty){
+    Log("Creating Chest");
+
     InteractivePart * chest = malloc(sizeof(InteractivePart));
 
     if(chest == NULL){
@@ -151,6 +158,7 @@ int createChest(SDL_Window *window, InteractiveList ** interactiveList, const in
     chest->part.chest.size.width = 0;
 
     addElementToChainList(chest, interactiveList);
+    return 0;
 }
 
 // ------------------------------------------ //
@@ -161,6 +169,7 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
     random_number = (rand() % (*difficulty*2)) + 1;
 
     if(random_number <= 4){
+        Log("Creating Doors / Button / Lift");
 
         // Create Buttons and doors
         for (int i = 0; i < random_number; ++i) {
@@ -179,14 +188,17 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
                 InteractivePart * activePart = malloc(sizeof(InteractivePart));
 
                 if(activePart == NULL) {
+                    //Free the button "connected" to the doors
                     free(button);
                 }
                 else{
+                    // Comment part for chosing between BUTTON and LIFT (cause lift not implemented yet)
                     //if(random_number <= 2){
                         activePart->type = DOOR;
                         activePart->part.door.active = 0;
                         activePart->part.door.position.x = 0;
                         activePart->part.door.position.y = 0;
+                        button->part.button.activeThing = (struct InteractivePart *) activePart;
                     //}
                     //else{
 //                        activePart->type = LIFT;
@@ -205,13 +217,15 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
         //printInteractiveList(*interactiveList);
     }
     else{
-        Log("No Doors");
+        Log("No Doors / Buttons / Lift");
     }
 }
 
 // ------------------------------------------ //
 
 int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer * renderer, InteractiveList ** interactiveList){
+
+    Log("Creating interactive chain list");
 
     if(imageSurfaceDownStairs == NULL){
         imageSurfaceUpStairs = IMG_Load("./icons/upStairs.png");
@@ -312,6 +326,8 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
     dstRect.y =  part->part.button.position.y;
 
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
+
+    return 0;
 }
 
 
@@ -359,6 +375,8 @@ int drawChest(SDL_Window *window, SDL_Renderer *renderer, const int * difficulty
     dstRect.y =  part->part.chest.position.y;
 
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
+
+    return 0;
 }
 
 
@@ -382,7 +400,7 @@ void drawLift(){
 
 // ------------------------------------------------ //
 
-void drawDoors(){
+void drawDoors(SDL_Renderer * renderer, InteractivePart *part){
     SDL_Log("Draw Doors");
 }
 
@@ -423,6 +441,8 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
 
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
 
+    return 0;
+
 }
 
 // ------------------------------------------------ //
@@ -441,7 +461,7 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
                 break;
 
             case BUTTON:
-                SDL_Log("Interactive Type: Button\n");
+                //SDL_Log("Interactive Type: Button\n");
                 drawButtons(window, renderer, &list->interactivePart, difficulty, &element);
                 break;
 
@@ -481,6 +501,9 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
 // ------------------------------------------------ //
 
 void interactWithPart(InteractiveList * interactiveList, Player * player, int * menuState){
+
+    Log("Interacting with parts");
+
     int min;
     int max;
     int partX;
@@ -494,8 +517,9 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
     int changeFloor = 0;
 
     if(interactiveList == NULL){
-        Log("No chain list :/");
+        Log("No chain list :/, can't interact");
     }
+
     while (interactiveList != NULL){
         switch (interactiveList->interactivePart.type) {
             case BUTTON:
