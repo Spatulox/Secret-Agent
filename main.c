@@ -197,7 +197,7 @@ int main(int argc, char** argv) {
                         drawBuilding(renderer, &build, &dm, &difficulty);
                         drawInteractiveParts(window, renderer, interactiveList, &difficulty);
                         drawPlayer(renderer, dm, &playerInfos);
-                        Log("Touche Z !");
+                        //Log("Touche Z !");
                         break;
 
                     case SDLK_s:
