@@ -127,9 +127,9 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
 
     SDL_Color fColor = {0, 0, 0};
 
-
     //SDL_Log("creating buttons menu state : %d", *menuState);
     if (*menuState == 0){
+
         // Draw buttons on the renderer
         for (int i = 0; i < 3; i++) {
             createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
@@ -143,7 +143,6 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
     else{
         Log("Wrong menu state, can't draw buttons");
     }
-
     Log("Menu created");
 
 }

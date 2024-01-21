@@ -14,7 +14,7 @@
 typedef struct {
     int active;
     Point position;
-    struct InteractivePart * activeThing;
+    struct Doors * activeThing;
 } InGameButton;
 
 

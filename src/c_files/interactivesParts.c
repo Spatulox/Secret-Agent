@@ -176,6 +176,7 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
             // Create Button
 
             InteractivePart * button = malloc(sizeof(InteractivePart));
+            InteractivePart * activePart = malloc(sizeof(InteractivePart));
 
             if(button != NULL){
                 Log(" | Creating Button");
@@ -186,7 +187,7 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
                 //button->part.button.activeThing = NULL;
 
 
-                InteractivePart * activePart = malloc(sizeof(InteractivePart));
+                //InteractivePart * activePart = malloc(sizeof(InteractivePart));
 
                 if(activePart == NULL) {
                     //Free the button "connected" to the doors
@@ -201,7 +202,8 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
                         activePart->part.door.active = 0;
                         activePart->part.door.position.x = 0;
                         activePart->part.door.position.y = 0;
-                        button->part.button.activeThing = (struct InteractivePart *) activePart;
+                        button->part.button.activeThing = (struct Doors *) &activePart->part.door;
+                        // Not a problem, if you change like the compilator want, it not gonna work.
                     //}
                     //else{
 //                        Log("Creating Lift");
@@ -211,7 +213,9 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
 //                        activePart->part.door.position.y = 0;
                     //}
 
-                    button->part.button.activeThing = (struct InteractivePart *) activePart;
+                    SDL_Log("active Part doors %p", activePart);
+                    //SDL_Log("active Part doors %p", (struct Doors *) activePart);
+                    //button->part.button.activeThing = (struct InteractivePart *) &activePart;
                     addElementToChainList(activePart, interactiveList);
                     addElementToChainList(button, interactiveList);
                 }
@@ -226,6 +230,9 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
     else{
         Log("No Doors / Buttons / Lift");
     }
+
+    printInteractiveList(*interactiveList);
+
 
     return 0;
 }
@@ -291,11 +298,15 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
 
 
 
+
+
+
+
 // ------------ DRAW FUNCTIONS ------------ //
 
 int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *part, const int * difficulty, int * buttonFloor){
 
-
+    SDL_Log("Draw button");
     SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, imageChest);
 
     if(part->part.button.active == 1){
@@ -314,33 +325,53 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
     int imageHeight;
     SDL_QueryTexture(imageTexture, NULL, NULL, &imageWidth, &imageHeight);
 
+
+    // Determine the place / floor of the button
+    int window_width;
+    int window_height;
+
+    SDL_GetWindowSize(window, &window_width, &window_height);
+    int lastFloorGround = getLastFloorGround(&window_height, difficulty);
+
+    if(lastFloorGround == -1){
+        Log("Impossible to calculate the lastFloor ground");
+        return 1;
+    }
+    int heightBetweenFloors = lastFloorGround - (window_height*0.1);
+
+
     if(part->part.button.position.x == 0) {
-
-        int window_width;
-        int window_height;
-
-        SDL_GetWindowSize(window, &window_width, &window_height);
-        int lastFloorGround = getLastFloorGround(&window_height, difficulty);
-
-        if(lastFloorGround == -1){
-            Log("Impossible to calculate the lastFloor ground");
-            return 1;
-        }
 
         int min = 0 + window_width * 0.2;
         int max = (int)(window_width - window_width * 0.3);
         int random_number = min + rand() % (max - min + 1);
 
 
-        int heightBetweenFloors = lastFloorGround - (window_height*0.1);
+
 
         int floor = window_height*0.2 + heightBetweenFloors* (*buttonFloor);
+        int ceil = window_height*0.1 + heightBetweenFloors* (*buttonFloor-1);
 
         part->part.button.position.x = random_number;
-        part->part.button.position.y = window_height*0.2 + (floor - (heightBetweenFloors/2) -imageHeight/2);// - ((lastFloorGround - window_width*0.1)/2);
+        part->part.button.position.y = window_height*0.2 + (floor - (heightBetweenFloors/2) -imageHeight/2);
 
+
+        // Determine the floor
+        /*Doors *door = (Doors *) part->part.button.activeThing;
+        door->active = 1;
+        door->position.x = 200;
+        door->position.y = ceil;*/
+
+        random_number = min + rand() % (max - min + 1);
+        InteractivePart *door = (InteractivePart *) part->part.button.activeThing;
+        door->part.door.active = 1;
+        door->part.door.position.x = random_number;
+        door->part.door.position.y = ceil;
+
+        displayInteractivePart(part);
     }
 
+    // Draw the button
     SDL_Rect dstRect;
     dstRect.w = imageWidth;
     dstRect.h = imageHeight;
@@ -348,6 +379,12 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
     dstRect.y =  part->part.button.position.y;
 
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
+
+    InteractivePart *door = (InteractivePart *) part->part.button.activeThing;
+    // Draw the doors inside the button
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawLine(renderer, door->part.door.position.x, door->part.door.position.y, door->part.door.position.x, door->part.door.position.y + heightBetweenFloors);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
     return 0;
 }
@@ -424,8 +461,15 @@ void drawLift(){
 // ------------------------------------------------ //
 
 int drawDoors(SDL_Renderer * renderer, InteractivePart *part){
-    //SDL_Log("Draw Doors");
-    return 0;
+//    SDL_Log("Draw Doors");
+//
+//    displayInteractivePart(part);
+//
+//    Log("-----------------skdjcryfg-------------------");
+//
+//    SDL_RenderDrawLine(renderer, part->part.door.position.x, part->part.door.position.y, 200, part->part.door.position.y + 500);
+//
+//    return 0;
 }
 
 // ------------------------------------------------ //
@@ -475,6 +519,9 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
 void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, InteractiveList *list, const int * difficulty){
 
     int element = 1;
+    Log("-----Print LIST-----");
+    printInteractiveList(list);
+    Log("-----Print LIST FINI-----");
     while (list != NULL) {
         // Imprimer les détails de l'élément interactif en cours
         //SDL_Log("%d", element);
@@ -502,10 +549,11 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
                 break;
 
             case DOOR:
+                // Doors aren't 
                 //SDL_Log("Interactive Type: Door\n");
-//                if(drawDoors(renderer, &list->interactivePart) != 0){
-//                    Log("Drawing Doors failed");
-//                }
+                //if(drawDoors(renderer, &list->interactivePart) != 0){
+                //    Log("Drawing Doors failed");
+                //}
                 break;
 
             case ELECTRIC_METER:
