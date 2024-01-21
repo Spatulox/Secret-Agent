@@ -125,20 +125,32 @@ int main(int argc, char** argv) {
 
             if(createBuilding(renderer,&difficulty, &build, &dm) != 0){
                 Log("Impossible to create the building");
-                destroySDL(window, renderer, NULL);
+                menuState = 0;
+                //destroySDL(window, renderer, NULL);
+            }
+            else{
+                Log("Building successfully loaded !");
+                //printInteractiveList(interactiveList);
             }
 
             if(createInteractive(window, &difficulty, renderer, &interactiveList) != 0){
                 Log("Impossible to create the interactive parts");
-                destroySDL(window, renderer, NULL);
+                menuState = 0;
+                //destroySDL(window, renderer, NULL);
             }
             else{
-                printInteractiveList(interactiveList);
+                Log("Interactive part successfully loaded !");
+                //printInteractiveList(interactiveList);
             }
 
             if(loadPlayer(renderer, dm, &playerInfos, &difficulty) != 0){
                 Log("Impossible to load the player");
-                destroySDL(window, renderer, NULL);
+                menuState = 0;
+                //destroySDL(window, renderer, NULL);
+            }
+            else{
+                Log("Player successfully loaded !");
+                //printInteractiveList(interactiveList);
             }
         }
 
