@@ -113,13 +113,14 @@ int addElementToChainList(InteractivePart* newPart, InteractiveList** head) {
         Log("Impossible to create an element for the chain list");
         return 1;
     }
-
+    SDL_Log("add new part %p", newPart);
     new->interactivePart = *newPart;
     new->next = (struct InteractiveList *) *head;
-    *head = new; // Met à jour la tête de liste à l'extérieur de la fonction
+    *head = new;
     //Log("Element created");
     return 0;
 }
+
 // ----------------------------------------------------------- //
 
 void freeChainList(InteractiveList** head) {
@@ -179,9 +180,88 @@ void printInteractiveList(InteractiveList *list) {
             default:
                 SDL_Log("Interactive Type: Unknown\n");
         }
+
+        displayInteractivePart(&list->interactivePart);
         // Passer à l'élément suivant dans la liste
         list = (InteractiveList *)list->next;
         element++;
     }
     SDL_Log("Printing Finished !");
+}
+
+// ----------------------------------------------------------- //
+
+void displayInteractivePart(InteractivePart * part) {
+    Doors * door;
+    switch (part->type) {
+        case BUTTON:
+            SDL_Log("Type: InGameButton\n");
+            SDL_Log(" | Address: %p\n", part);
+            SDL_Log(" | Active: %d\n", part->part.button.active);
+            SDL_Log(" | Position: (%d, %d)\n", part->part.button.position.x, part->part.button.position.y);
+            SDL_Log(" | ActiveThing: %p\n", part->part.button.activeThing);
+            /*door = (Doors *) part->part.button.activeThing;
+            SDL_Log(" | Type: Door\n");
+            SDL_Log(" |  | Address: %p\n", door);
+            SDL_Log(" |  | Active: %d\n", door->active);
+            SDL_Log(" |  | Position: (%d, %d)\n", door->position.x, door->position.y);*/
+            InteractivePart * interPart = (InteractivePart *) part->part.button.activeThing;
+            SDL_Log(" | Type: Door\n");
+            SDL_Log(" |  | Address: %p\n", interPart);
+            SDL_Log(" |  | Active: %d\n", interPart->part.door.active);
+            SDL_Log(" |  | Position: (%d, %d)\n", interPart->part.door.position.x, interPart->part.door.position.y);
+            // Ajouter les champs spécifiques de la structure InGameButton
+            break;
+        case ELECTRIC_METER:
+            SDL_Log("Type: ElectricMeter\n");
+            SDL_Log(" | Address: %p\n", part);
+            SDL_Log(" | Active: %d\n", part->part.electricMeter.active);
+            SDL_Log(" | Position: (%d, %d)\n", part->part.electricMeter.position.x, part->part.electricMeter.position.y);
+            SDL_Log(" | ActiveThing: %p\n", part->part.electricMeter.activeThing);
+            // Ajouter les champs spécifiques de la structure ElectricMeter
+            break;
+        case CODE:
+            SDL_Log("Type: Code\n");
+            SDL_Log(" | Address: %p\n", part);
+            SDL_Log(" | Active: %d\n", part->part.code.active);
+            SDL_Log(" | Position: (%d, %d)\n", part->part.code.position.x, part->part.code.position.y);
+            SDL_Log(" | Code: %d\n", part->part.code.code);
+            SDL_Log(" | ActiveThing: %p\n", part->part.code.activeThing);
+            // Ajouter les champs spécifiques de la structure Code
+            break;
+        case LIFT:
+            SDL_Log("Type: Lift\n");
+            SDL_Log(" | Address: %p\n", part);
+            SDL_Log(" | Active: %d\n", part->part.lift.active);
+            SDL_Log(" | Position: (%d, %d)\n", part->part.lift.position.x, part->part.lift.position.y);
+            // Ajouter les champs spécifiques de la structure Lift
+            break;
+        case DOOR:
+            SDL_Log("Type: Door\n");
+            SDL_Log(" | Address global struct: %p\n", part);
+            //SDL_Log(" | Active: %d\n", part->part.door.active);
+            //SDL_Log(" | Position: (%d, %d)\n", part->part.door.position.x, part->part.door.position.y);
+            door = (Doors *) &part->part.door;
+            SDL_Log(" |  | Address under struct door: %p\n", door);
+            SDL_Log(" |  | Active: %d\n", door->active);
+            SDL_Log(" |  | Position: (%d, %d)\n", door->position.x, door->position.y);
+            // Ajouter les champs spécifiques de la structure Door
+            break;
+        case STAIRS:
+            SDL_Log("Type: Stairs\n");
+            SDL_Log(" | Address: %p\n", part);
+            SDL_Log(" | UpDownStairs: %d\n", part->part.stairs.upDownStairs);
+            SDL_Log(" | Position: (%d, %d)\n", part->part.stairs.position.x, part->part.stairs.position.y);
+            SDL_Log(" | NextStairs: %p\n", part->part.stairs.linkStairs);
+            // Ajouter les champs spécifiques de la structure Stairs
+            break;
+        case CHEST:
+            SDL_Log("Type: Chest\n");
+            SDL_Log(" | Address: %p\n", part);
+            SDL_Log(" | Position: (%d, %d)\n", part->part.chest.position.x, part->part.chest.position.y);
+            // Ajouter les champs spécifiques de la structure Chest
+            break;
+        default:
+            SDL_Log("Type inconnu\n");
+    }
 }

@@ -14,5 +14,6 @@ void freeChainList(InteractiveList** head);
 //int addElementToChainList(InteractivePart newPart, InteractiveList** head);
 int addElementToChainList(InteractivePart* newPart, InteractiveList** head);
 void printInteractiveList(InteractiveList *list);
+void displayInteractivePart(InteractivePart *part);
 
 #endif
