@@ -50,6 +50,7 @@ typedef struct {
 typedef struct {
     int active;
     Point position;
+    Size size;
 } Doors;
 
 // ------------------------------------------------- //

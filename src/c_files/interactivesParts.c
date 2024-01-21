@@ -193,6 +193,7 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
                     //Free the button "connected" to the doors
                     Log(" | Failed when creating a activating part connected to the button");
                     free(button);
+                    return 1;
                 }
                 else{
                     // Comment part for chosing between BUTTON and LIFT (cause lift not implemented yet)
@@ -213,10 +214,8 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
 //                        activePart->part.door.position.y = 0;
                     //}
 
-                    SDL_Log("active Part doors %p", activePart);
-                    //SDL_Log("active Part doors %p", (struct Doors *) activePart);
                     //button->part.button.activeThing = (struct InteractivePart *) &activePart;
-                    addElementToChainList(activePart, interactiveList);
+                    //addElementToChainList(activePart, interactiveList);
                     addElementToChainList(button, interactiveList);
                 }
             }
@@ -231,7 +230,7 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
         Log("No Doors / Buttons / Lift");
     }
 
-    printInteractiveList(*interactiveList);
+    //printInteractiveList(*interactiveList);
 
 
     return 0;
@@ -290,10 +289,8 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
     //printInteractiveList(interactiveList);
     Log("Drawing interative part for the first time");
     drawInteractiveParts(window, renderer, *interactiveList, difficulty);
-
     return 0;
 }
-
 
 
 
@@ -306,7 +303,7 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
 
 int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *part, const int * difficulty, int * buttonFloor){
 
-    SDL_Log("Draw button");
+    //SDL_Log("Draw button");
     SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, imageChest);
 
     if(part->part.button.active == 1){
@@ -350,7 +347,7 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
 
 
         int floor = window_height*0.2 + heightBetweenFloors* (*buttonFloor);
-        int ceil = window_height*0.1 + heightBetweenFloors* (*buttonFloor-1);
+        int ceil = window_height*0.1 + heightBetweenFloors* (*buttonFloor/2);
 
         part->part.button.position.x = random_number;
         part->part.button.position.y = window_height*0.2 + (floor - (heightBetweenFloors/2) -imageHeight/2);
@@ -367,8 +364,10 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
         door->part.door.active = 1;
         door->part.door.position.x = random_number;
         door->part.door.position.y = ceil;
+        door->part.door.size.height = heightBetweenFloors;
+        door->part.door.size.width = 0;
 
-        displayInteractivePart(part);
+        //displayInteractivePart(part);
     }
 
     // Draw the button
@@ -380,11 +379,13 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
 
     SDL_RenderCopy(renderer, imageTexture, NULL, &dstRect);
 
-    InteractivePart *door = (InteractivePart *) part->part.button.activeThing;
-    // Draw the doors inside the button
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderDrawLine(renderer, door->part.door.position.x, door->part.door.position.y, door->part.door.position.x, door->part.door.position.y + heightBetweenFloors);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    if(part->part.button.active == 0){
+        InteractivePart *door = (InteractivePart *) part->part.button.activeThing;
+        // Draw the doors inside the button
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderDrawLine(renderer, door->part.door.position.x, door->part.door.position.y, door->part.door.position.x, door->part.door.position.y + heightBetweenFloors);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    }
 
     return 0;
 }
@@ -519,9 +520,9 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
 void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, InteractiveList *list, const int * difficulty){
 
     int element = 1;
-    Log("-----Print LIST-----");
+   /* Log("-----Print LIST-----");
     printInteractiveList(list);
-    Log("-----Print LIST FINI-----");
+    Log("-----Print LIST FINI-----");*/
     while (list != NULL) {
         // Imprimer les détails de l'élément interactif en cours
         //SDL_Log("%d", element);
@@ -549,7 +550,9 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
                 break;
 
             case DOOR:
-                // Doors aren't 
+                // Doors aren't independent
+                // It's inside the Button
+
                 //SDL_Log("Interactive Type: Door\n");
                 //if(drawDoors(renderer, &list->interactivePart) != 0){
                 //    Log("Drawing Doors failed");
@@ -603,6 +606,9 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
     while (interactiveList != NULL){
         switch (interactiveList->interactivePart.type) {
             case BUTTON:
+
+                // Button Part
+
                 //SDL_Log("Interactive Type: Button\n");
                 partX = interactiveList->interactivePart.part.button.position.x;
                 partY = interactiveList->interactivePart.part.button.position.y;
@@ -622,9 +628,13 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
 
                         if(interactiveList->interactivePart.part.button.active == 0){
                             interactiveList->interactivePart.part.button.active = 1;
+                            InteractivePart * tmp = (InteractivePart *) interactiveList->interactivePart.part.button.activeThing;
+                            tmp->part.door.active = 0;
                         }
                         else{
                             interactiveList->interactivePart.part.button.active = 0;
+                            InteractivePart * tmp = (InteractivePart *) interactiveList->interactivePart.part.button.activeThing;
+                            tmp->part.door.active = 1;
                         }
                     }
                 }
@@ -674,6 +684,9 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
                 break;
 
             case DOOR:
+                // Doors aren't independent
+                // It's inside the Button
+
                 //SDL_Log("Interactive Type: Door\n");
                 break;
 
@@ -696,4 +709,52 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
         // Passer à l'élément suivant dans la liste
         interactiveList = (InteractiveList *) interactiveList->next;
     }
+}
+
+
+
+int checkCollision(InteractiveList * interactiveList, Player * player, int leftRightPress){
+
+    if(interactiveList == NULL){
+        Log("Impossible to check collisions, interactiveList null");
+        return 1;
+    }
+
+    InteractivePart * doors;
+    while (interactiveList != NULL) {
+        switch (interactiveList->interactivePart.type) {
+            // The doors collision cause the doors are inside the buttons
+            case BUTTON:
+                displayInteractivePart(&interactiveList->interactivePart);
+                doors = (InteractivePart *) interactiveList->interactivePart.part.button.activeThing;
+
+                int min = doors->part.door.position.x - player->size.width*1.2;
+                int max = doors->part.door.position.x + player->size.width*0.2;
+                int y = (doors->part.door.position.y + doors->part.door.size.height) - player->size.height;
+
+                SDL_Log("%d, %d", min, max);
+                SDL_Log("%d", player->coordinates.x);
+                if(doors->part.door.active == 1){
+
+                    if(player->coordinates.x >= min && player->coordinates.x <= max && player->coordinates.y == y)
+                    {
+                        // Inside the hitbox
+                        if(player->coordinates.x < doors->part.door.position.x && leftRightPress == 0){
+                            return 0;
+                        }
+                        else if(player->coordinates.x > doors->part.door.position.x && leftRightPress == 1){
+                            return 0;
+                        }
+                        return 1;
+                    }
+                }
+
+                break;
+            default:
+                break;
+        }
+
+        interactiveList = (InteractiveList *) interactiveList->next;
+    }
+    return 0;
 }

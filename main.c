@@ -208,7 +208,12 @@ int main(int argc, char** argv) {
                         SDL_RenderClear(renderer);
                         drawBuilding(renderer, &build, &dm, &difficulty);
                         drawInteractiveParts(window, renderer, interactiveList, &difficulty);
-                        rightPlayer(renderer, dm, &playerInfos);
+                        if(checkCollision(interactiveList, &playerInfos, 1) == 0) {
+                            rightPlayer(renderer, dm, &playerInfos);
+                        }
+                        else{
+                            drawPlayer(renderer, dm, &playerInfos);
+                        }
                         SDL_Delay(70);
                         break;
 
@@ -216,7 +221,12 @@ int main(int argc, char** argv) {
                         SDL_RenderClear(renderer);
                         drawBuilding(renderer, &build, &dm, &difficulty);
                         drawInteractiveParts(window, renderer, interactiveList, &difficulty);
-                        leftPlayer(renderer, dm, &playerInfos);
+                        if(checkCollision(interactiveList, &playerInfos, 0) == 0){
+                            leftPlayer(renderer, dm, &playerInfos);
+                        }
+                        else{
+                            drawPlayer(renderer, dm, &playerInfos);
+                        }
                         SDL_Delay(70);
                         break;
 

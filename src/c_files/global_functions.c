@@ -113,7 +113,7 @@ int addElementToChainList(InteractivePart* newPart, InteractiveList** head) {
         Log("Impossible to create an element for the chain list");
         return 1;
     }
-    SDL_Log("add new part %p", newPart);
+
     new->interactivePart = *newPart;
     new->next = (struct InteractiveList *) *head;
     *head = new;
@@ -125,7 +125,7 @@ int addElementToChainList(InteractivePart* newPart, InteractiveList** head) {
 
 void freeChainList(InteractiveList** head) {
 
-    //printInteractiveList(*head);
+    printInteractiveList(*head);
 
     InteractiveList* curr = *head;
     InteractiveList* next;
@@ -210,6 +210,7 @@ void displayInteractivePart(InteractivePart * part) {
             SDL_Log(" |  | Address: %p\n", interPart);
             SDL_Log(" |  | Active: %d\n", interPart->part.door.active);
             SDL_Log(" |  | Position: (%d, %d)\n", interPart->part.door.position.x, interPart->part.door.position.y);
+            SDL_Log(" |  | Size: (%d, %d)\n", interPart->part.door.size.width, interPart->part.door.size.height);
             // Ajouter les champs spécifiques de la structure InGameButton
             break;
         case ELECTRIC_METER:
@@ -245,6 +246,7 @@ void displayInteractivePart(InteractivePart * part) {
             SDL_Log(" |  | Address under struct door: %p\n", door);
             SDL_Log(" |  | Active: %d\n", door->active);
             SDL_Log(" |  | Position: (%d, %d)\n", door->position.x, door->position.y);
+            SDL_Log(" |  | Size: (%d, %d)\n", door->size.width, door->size.height);
             // Ajouter les champs spécifiques de la structure Door
             break;
         case STAIRS:
