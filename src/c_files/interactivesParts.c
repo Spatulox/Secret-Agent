@@ -32,7 +32,7 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
     InteractivePart * partUpStairs = malloc(sizeof(InteractivePart));
 
     if(partUpStairs == NULL){
-        Log("Impossible to reserve the data");
+        Log("Impossible to reserve the data for partUpStairs");
         freeChainList(interactiveList);
         return 1;
     }
@@ -40,7 +40,7 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
     InteractivePart * partDownStairs = malloc(sizeof(InteractivePart));
 
     if(partDownStairs == NULL){
-        Log("Impossible to reserve the data");
+        Log("Impossible to reserve the data for partDownStairs");
         freeChainList(interactiveList);
         return 1;
     }
@@ -178,6 +178,7 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
             InteractivePart * button = malloc(sizeof(InteractivePart));
 
             if(button != NULL){
+                Log(" | Creating Button");
                 button->type = BUTTON;
                 button->part.button.active = 0;
                 button->part.button.position.x = 0;
@@ -189,11 +190,13 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
 
                 if(activePart == NULL) {
                     //Free the button "connected" to the doors
+                    Log(" | Failed when creating a activating part connected to the button");
                     free(button);
                 }
                 else{
                     // Comment part for chosing between BUTTON and LIFT (cause lift not implemented yet)
                     //if(random_number <= 2){
+                        Log(" | Creating Door");
                         activePart->type = DOOR;
                         activePart->part.door.active = 0;
                         activePart->part.door.position.x = 0;
@@ -201,6 +204,7 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
                         button->part.button.activeThing = (struct InteractivePart *) activePart;
                     //}
                     //else{
+//                        Log("Creating Lift");
 //                        activePart->type = LIFT;
 //                        activePart->part.door.active = 0;
 //                        activePart->part.door.position.x = 0;
@@ -212,22 +216,26 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
                     addElementToChainList(button, interactiveList);
                 }
             }
+            else{
+                Log(" | Impossible to reserve the button data into the RAM");
+                return 1;
+            }
 
         }
-        //printInteractiveList(*interactiveList);
     }
     else{
         Log("No Doors / Buttons / Lift");
     }
+
+    return 0;
 }
 
 // ------------------------------------------ //
 
 int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer * renderer, InteractiveList ** interactiveList){
 
-    Log("Creating interactive chain list");
-
     if(imageSurfaceDownStairs == NULL){
+        Log("Loading images from disk");
         imageSurfaceUpStairs = IMG_Load("./icons/upStairs.png");
         imageSurfaceDownStairs = IMG_Load("./icons/downStairs.png");
         imageChest = IMG_Load("./icons/chest.png");
@@ -242,25 +250,38 @@ int createInteractive(SDL_Window *window, const int * difficulty, SDL_Renderer *
     }
 
     if(*interactiveList != NULL){
-        Log("Refreshing Interactive list");
+        Log("Deleting old Interactive list");
         freeChainList(interactiveList);
     }
+
+    Log("Filling interactive chain list");
+
     int lastXStairs = 0;
     for (int i = 0; i < ((*difficulty)*3)-1; ++i) {
 
         // ------- Stairs ------- //
 
-        createStairs(window, difficulty, interactiveList, i, &lastXStairs);
+        if(createStairs(window, difficulty, interactiveList, i, &lastXStairs) != 0){
+            Log("Creating stairs failed");
+            return 1;
+        }
     }
 
     // ------- Chest ------- //
-    createChest(window, interactiveList, difficulty);
+    if(createChest(window, interactiveList, difficulty) != 0){
+        Log("Creating chest failed");
+        return 1;
+    }
 
     // ------- Buttons ------- //
-    createDoorsAndButtons(window, difficulty, interactiveList);
+    if(createDoorsAndButtons(window, difficulty, interactiveList) != 0){
+        Log("Creating Button / Doors / Lift failed");
+        return 1;
+    }
 
 
     //printInteractiveList(interactiveList);
+    Log("Drawing interative part for the first time");
     drawInteractiveParts(window, renderer, *interactiveList, difficulty);
 
     return 0;
@@ -285,6 +306,7 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
     }
 
     if(imageTexture == NULL){
+        Log("Impossible to load the button image");
         return 1;
     }
 
@@ -335,6 +357,7 @@ int drawChest(SDL_Window *window, SDL_Renderer *renderer, const int * difficulty
 
     SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, imageChest);
     if(imageTexture == NULL){
+        Log("Impossible to load the chest texture");
         return 1;
     }
 
@@ -400,8 +423,9 @@ void drawLift(){
 
 // ------------------------------------------------ //
 
-void drawDoors(SDL_Renderer * renderer, InteractivePart *part){
+int drawDoors(SDL_Renderer * renderer, InteractivePart *part){
     //SDL_Log("Draw Doors");
+    return 0;
 }
 
 // ------------------------------------------------ //
@@ -418,12 +442,13 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
     }
 
     if(imageSurface == NULL){
-        Log("Impossible to load the stair texture");
+        Log("Impossible to load the stair image");
         return 1;
     }
 
     SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
     if(imageTexture == NULL){
+        Log("Impossible to load the stair texture");
         return 1;
     }
 
@@ -449,7 +474,6 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
 
 void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, InteractiveList *list, const int * difficulty){
 
-    //Log("drawInteractiveParts");
     int element = 1;
     while (list != NULL) {
         // Imprimer les détails de l'élément interactif en cours
@@ -457,12 +481,16 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
         switch (list->interactivePart.type) {
             case STAIRS:
                 //SDL_Log("Interactive Type: Stairs\n");
-                drawStairs(renderer, &list->interactivePart);
+                if(drawStairs(renderer, &list->interactivePart) != 0){
+                    Log("Drawing stairs failed");
+                }
                 break;
 
             case BUTTON:
                 //SDL_Log("Interactive Type: Button\n");
-                drawButtons(window, renderer, &list->interactivePart, difficulty, &element);
+                if(drawButtons(window, renderer, &list->interactivePart, difficulty, &element) != 0){
+                    Log("Drawing Buttons failed");
+                }
                 break;
 
             case CODE:
@@ -475,7 +503,9 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
 
             case DOOR:
                 //SDL_Log("Interactive Type: Door\n");
-                drawDoors(renderer, &list->interactivePart);
+//                if(drawDoors(renderer, &list->interactivePart) != 0){
+//                    Log("Drawing Doors failed");
+//                }
                 break;
 
             case ELECTRIC_METER:
@@ -484,7 +514,9 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
 
             case CHEST:
                 //SDL_Log("Interactive Type: Chest\n");
-                drawChest(window, renderer, difficulty, &list->interactivePart);
+                if(drawChest(window, renderer, difficulty, &list->interactivePart) !=0 ){
+                    Log("Drawing chest failed");
+                }
                 break;
 
             default:

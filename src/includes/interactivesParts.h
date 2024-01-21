@@ -13,7 +13,7 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
 void drawElectricMetter();
 void drawCode();
 void drawLift();
-void drawDoors(SDL_Renderer * renderer, InteractivePart *part);
+int drawDoors(SDL_Renderer * renderer, InteractivePart *part);
 int drawStairs(SDL_Renderer * renderer, InteractivePart *part);
 
 void interactWithPart(InteractiveList * interactiveList, Player * player, int * menuState);
