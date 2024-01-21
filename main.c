@@ -108,10 +108,12 @@ int main(int argc, char** argv) {
     while(isRunning){
 
         // Render the renderer
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderPresent(renderer);
 
         // Create the menu
         if(lastMenuState != menuState && menuState < 3){
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             createMenu(window, renderer, width, height, dm, "./fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
             executeMusic(audio, &menuState);
