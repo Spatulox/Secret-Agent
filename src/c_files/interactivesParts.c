@@ -401,7 +401,7 @@ void drawLift(){
 // ------------------------------------------------ //
 
 void drawDoors(SDL_Renderer * renderer, InteractivePart *part){
-    SDL_Log("Draw Doors");
+    //SDL_Log("Draw Doors");
 }
 
 // ------------------------------------------------ //
@@ -466,24 +466,24 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
                 break;
 
             case CODE:
-                SDL_Log("Interactive Type: Code\n");
+                //SDL_Log("Interactive Type: Code\n");
                 break;
 
             case LIFT:
-                SDL_Log("Interactive Type: Lift\n");
+                //SDL_Log("Interactive Type: Lift\n");
                 break;
 
             case DOOR:
-                SDL_Log("Interactive Type: Door\n");
+                //SDL_Log("Interactive Type: Door\n");
                 drawDoors(renderer, &list->interactivePart);
                 break;
 
             case ELECTRIC_METER:
-                SDL_Log("Interactive Type: Electric Meter\n");
+                //SDL_Log("Interactive Type: Electric Meter\n");
                 break;
 
             case CHEST:
-                SDL_Log("Interactive Type: Chest\n");
+                //SDL_Log("Interactive Type: Chest\n");
                 drawChest(window, renderer, difficulty, &list->interactivePart);
                 break;
 
@@ -524,6 +524,31 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
         switch (interactiveList->interactivePart.type) {
             case BUTTON:
                 //SDL_Log("Interactive Type: Button\n");
+                partX = interactiveList->interactivePart.part.button.position.x;
+                partY = interactiveList->interactivePart.part.button.position.y;
+
+                // 40 button's width
+                min = partX - 55 - (40 * 0.3);
+                max = partX + 40 + (40 * 0.3);
+                //SDL_Log("partX %d, min %d, max %d, player x %d", partX, min, max, player->coordinates.x);
+
+                if(player->coordinates.x >= min && player->coordinates.x <= max){
+                    min = partY - (40 * 0.5);
+                    max = partY + 40 + (40 * 0.5);
+
+                    //SDL_Log("partY %d, min %d, max %d, player y %d", partY, min, max, player->coordinates.y);
+
+                    if(player->coordinates.y >= min && player->coordinates.y <= max) {
+
+                        if(interactiveList->interactivePart.part.button.active == 0){
+                            interactiveList->interactivePart.part.button.active = 1;
+                        }
+                        else{
+                            interactiveList->interactivePart.part.button.active = 0;
+                        }
+                    }
+                }
+
                 break;
 
             case STAIRS:
