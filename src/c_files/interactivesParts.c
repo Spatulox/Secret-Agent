@@ -567,7 +567,7 @@ void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, Interacti
 
 void interactWithPart(InteractiveList * interactiveList, Player * player, int * menuState){
 
-    Log("Interacting with parts");
+    //Log("Interacting with parts");
 
     int min;
     int max;
