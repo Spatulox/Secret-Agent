@@ -68,6 +68,49 @@ int createConfFile(){
 
 // ----------------------------------------------------------- //
 
+int writeConfFile(int lineNum, int key, char * string){
+
+    if( key == 114 || key == 109){
+        Log("WARNING : Already use for reload / go to menu");
+        return 0;
+    }
+
+    FILE *fp = fopen("../cmake-build-debug/conf.txt", "r+");
+
+    if (fp == NULL) {
+        Log("Chelou mon reuf, le fichier existait avant");
+        return 1;
+    }
+
+    char lines[10][100];
+    int i = 0;
+
+    while (fgets(lines[i], 100, fp)) {
+        i++;
+    }
+
+    fclose(fp);
+
+    sprintf(lines[lineNum], "%s =%d\n", string, key);
+
+    fp = fopen("conf.txt", "w");
+    if (fp == NULL) {
+        Log("Chelou mon reuf, le fichier existait avant");
+        return 1;
+    }
+
+    for (int y = 0; y < i; y++) {
+        fprintf(fp, "%s", lines[y]);
+    }
+
+    fclose(fp);
+
+    return 0;
+}
+
+
+// ----------------------------------------------------------- //
+
 void destroySDL(SDL_Window * window, SDL_Renderer * renderer, SDL_Texture * texture){
 
     if (texture != NULL){
