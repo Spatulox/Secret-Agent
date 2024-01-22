@@ -121,9 +121,6 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
                     *menuState = 0;
                     Log("Retour au menu");
                 }
-                else{
-                    SDL_Log("Something wrong");
-                }
             }
 
         }
