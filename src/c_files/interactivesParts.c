@@ -619,8 +619,8 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
                 //SDL_Log("partX %d, min %d, max %d, player x %d", partX, min, max, player->coordinates.x);
 
                 if(player->coordinates.x >= min && player->coordinates.x <= max){
-                    min = partY - (40 * 0.5);
-                    max = partY + 40 + (40 * 0.5);
+                    min = partY - (40 * 1.5);
+                    max = partY + 40 + (40 * 1.5);
 
                     //SDL_Log("partY %d, min %d, max %d, player y %d", partY, min, max, player->coordinates.y);
 
