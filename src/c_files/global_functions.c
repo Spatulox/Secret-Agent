@@ -255,6 +255,10 @@ void displayInteractivePart(InteractivePart * part) {
             SDL_Log(" | UpDownStairs: %d\n", part->part.stairs.upDownStairs);
             SDL_Log(" | Position: (%d, %d)\n", part->part.stairs.position.x, part->part.stairs.position.y);
             SDL_Log(" | NextStairs: %p\n", part->part.stairs.linkStairs);
+            Stairs * stairs = (Stairs *) part->part.stairs.linkStairs;
+            SDL_Log("Type: Stairs\n");
+            SDL_Log(" |  | UpDownStairs: %d\n", stairs->upDownStairs);
+            SDL_Log(" |  | Position: (%d, %d)\n", stairs->position.x, stairs->position.y);
             // Ajouter les champs spécifiques de la structure Stairs
             break;
         case CHEST:
