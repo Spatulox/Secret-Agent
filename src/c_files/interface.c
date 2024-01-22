@@ -125,7 +125,7 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
     buttons[5].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.5) - (height / 2), width, height - (dm.h / 30)};
     buttons[5].text = "Difficile";
 
-    buttons[6].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3.5) - (height / 2), width, height - (dm.h / 30)};
+    buttons[6].rect = (SDL_Rect){(dm.w / 2) - (width), (dm.h / 5) - (height / 2), width*2, height - (dm.h / 30)};
     buttons[6].text = "Associations des touches";
 
     buttons[7].rect = (SDL_Rect){(dm.w / 2) - (width) + width/3, (dm.h / 2.5) - (height / 2), width/2, height - (dm.h / 30)};
