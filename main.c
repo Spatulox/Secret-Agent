@@ -227,39 +227,6 @@ int main(int argc, char** argv) {
 
             }
             else if (event.type == SDL_KEYDOWN && menuState == 3) {
-                /*switch (event.key.keysym.sym) {
-                    case zkey:
-                        SDL_RenderClear(renderer);
-                        interactWithPart(interactiveList, &playerInfos);
-                        drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(renderer, interactiveList, &difficulty);
-                        drawPlayer(renderer, dm, &playerInfos);
-                        Log("Touche Z !");
-                        break;
-
-                    case SDLK_s:
-
-                        break;
-
-                    case SDLK_d:
-                        SDL_RenderClear(renderer);
-                        drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(renderer, interactiveList, &difficulty);
-                        rightPlayer(renderer, dm, &playerInfos);
-                        SDL_Delay(70);
-                        break;
-
-                    case SDLK_q:
-                        SDL_RenderClear(renderer);
-                        drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(renderer, interactiveList, &difficulty);
-                        leftPlayer(renderer, dm, &playerInfos);
-                        SDL_Delay(70);
-                        break;
-
-                    case SDLK_m:
-                        menuState = 0;
-                }*/
 
                 if(event.key.keysym.sym == key.interactKey){
                     SDL_RenderClear(renderer);
