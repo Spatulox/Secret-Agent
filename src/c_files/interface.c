@@ -155,6 +155,17 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
             createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
         }
     }
+    else if(*menuState == 2){
+        for (int i = 6; i < 11; i++) {
+            createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
+        }
+        /*createTextRectButton(&buttons[6].rect, window, renderer, dm, 255, 0, 0, 255, buttons[6].text, fontPath, fColor);
+        createTextRectButton(&buttons[7].rect, window, renderer, dm, 0, 255, 255, 255, buttons[7].text, fontPath, fColor);
+        createTextRectButton(&buttons[8].rect, window, renderer, dm, 255, 255, 255, 255, buttons[8].text, fontPath, fColor);
+        createTextRectButton(&buttons[9].rect, window, renderer, dm, 255, 255, 255, 255, buttons[9].text, fontPath, fColor);
+        createTextRectButton(&buttons[10].rect, window, renderer, dm, 255, 255, 255, 255, buttons[10].text, fontPath, fColor);*/
+    }
+
     else{
         Log("Wrong menu state, can't draw buttons");
     }

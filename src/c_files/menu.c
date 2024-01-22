@@ -56,4 +56,76 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
             //}
         }
     }
+    else if (*menuState == 2){
+        for (int i = 6; i < 11; i++) {
+            if (SDL_PointInRect(&clickPoint, &(buttons[i].rect))){
+                SDL_Event event;
+                if (strcmp(buttons[i].text, "Gauche") == 0) {
+                    Log("Gauche cliqué !");
+                    int quit = 0;
+
+                    while (quit == 0) {
+                        if (SDL_PollEvent(&event)) {
+                            if (event.type == SDL_QUIT) {
+                                quit = 1;
+                                //*menuState = 0;
+                            } else if (event.type == SDL_KEYDOWN) {
+                                //Log("La touche pressée a le code");
+                                SDL_Log("La touche pressée a le code : %d\n", event.key.keysym.sym);
+                                quit = 1;
+                            }
+                        }
+                    }
+                    Log("Touche changée");
+                    SDL_DetachThread(audio);
+                    break;
+                }
+                else if (strcmp(buttons[i].text, "Droite") == 0) {
+                    Log("Droite cliqué !");
+                    int quit = 0;
+
+                    while (quit == 0) {
+                        if (SDL_PollEvent(&event)) {
+                            if (event.type == SDL_QUIT) {
+                                quit = 1;
+                                //*menuState = 0;
+                            } else if (event.type == SDL_KEYDOWN) {
+                                SDL_Log("La touche pressée a le code : %d\n", event.key.keysym.sym);
+                                quit = 1;
+                            }
+                        }
+                    }
+                    SDL_DetachThread(audio);
+                    break;
+                }
+                else if (strcmp(buttons[i].text, "Interagir") == 0) {
+                    Log("Interagir cliqué !");
+
+                    int quit = 0;
+
+                    while (quit == 0) {
+                        if (SDL_PollEvent(&event)) {
+                            if (event.type == SDL_QUIT) {
+                                quit = 1;
+                                //*menuState = 0;
+                            } else if (event.type == SDL_KEYDOWN) {
+                                SDL_Log("La touche pressée a le code : %d\n", event.key.keysym.sym);
+                                quit = 1;
+                            }
+                        }
+                    }
+                    SDL_DetachThread(audio);
+                    break;
+                }
+                else if (strcmp(buttons[i].text, "Retour") == 0){
+                    *menuState = 0;
+                    Log("Retour au menu");
+                }
+                else{
+                    SDL_Log("Something wrong");
+                }
+            }
+
+        }
+    }
 }
