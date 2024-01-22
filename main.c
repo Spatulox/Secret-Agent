@@ -162,12 +162,10 @@ int main(int argc, char** argv) {
     while(isRunning){
 
         // Render the renderer
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderPresent(renderer);
 
         // Create the menu
         if(lastMenuState != menuState && menuState < 3){
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             createMenu(window, renderer, width, height, dm, "./fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
             executeMusic(audio, &menuState);
@@ -181,32 +179,20 @@ int main(int argc, char** argv) {
 
             if(createBuilding(renderer,&difficulty, &build, &dm) != 0){
                 Log("Impossible to create the building");
-                menuState = 0;
-                //destroySDL(window, renderer, NULL);
-            }
-            else{
-                Log("Building successfully loaded !");
-                //printInteractiveList(interactiveList);
+                destroySDL(window, renderer, NULL);
             }
 
             if(createInteractive(window, &difficulty, renderer, &interactiveList) != 0){
                 Log("Impossible to create the interactive parts");
-                menuState = 0;
-                //destroySDL(window, renderer, NULL);
+                destroySDL(window, renderer, NULL);
             }
             else{
-                Log("Interactive part successfully loaded !");
-                //printInteractiveList(interactiveList);
+                printInteractiveList(interactiveList);
             }
 
             if(loadPlayer(renderer, dm, &playerInfos, &difficulty) != 0){
                 Log("Impossible to load the player");
-                menuState = 0;
-                //destroySDL(window, renderer, NULL);
-            }
-            else{
-                Log("Player successfully loaded !");
-                //printInteractiveList(interactiveList);
+                destroySDL(window, renderer, NULL);
             }
         }
 
@@ -223,7 +209,7 @@ int main(int argc, char** argv) {
             if (event.type == SDL_QUIT) {
                 isRunning = 0;
             }
-            // Get the mouse click
+                // Get the mouse click
             else if (event.type == SDL_MOUSEBUTTONDOWN)
             {
                 int mouseX, mouseY;
@@ -241,65 +227,6 @@ int main(int argc, char** argv) {
 
             }
             else if (event.type == SDL_KEYDOWN && menuState == 3) {
-<<<<<<< HEAD
-                switch (event.key.keysym.sym) {
-                    case SDLK_z:
-                        SDL_RenderClear(renderer);
-                        interactWithPart(interactiveList, &playerInfos, &menuState);
-                        if(menuState != 3){
-                            break;
-                        }
-                        drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(window, renderer, interactiveList, &difficulty);
-                        drawPlayer(renderer, dm, &playerInfos);
-                        //Log("Touche Z !");
-                        break;
-
-                    case SDLK_s:
-
-                        break;
-
-                    case SDLK_d:
-                        SDL_RenderClear(renderer);
-                        drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(window, renderer, interactiveList, &difficulty);
-                        if(checkCollision(interactiveList, &playerInfos, 1) == 0) {
-                            rightPlayer(renderer, dm, &playerInfos);
-                        }
-                        else{
-                            drawPlayer(renderer, dm, &playerInfos);
-                        }
-                        SDL_Delay(70);
-                        break;
-
-                    case SDLK_q:
-                        SDL_RenderClear(renderer);
-                        drawBuilding(renderer, &build, &dm, &difficulty);
-                        drawInteractiveParts(window, renderer, interactiveList, &difficulty);
-                        if(checkCollision(interactiveList, &playerInfos, 0) == 0){
-                            leftPlayer(renderer, dm, &playerInfos);
-                        }
-                        else{
-                            drawPlayer(renderer, dm, &playerInfos);
-                        }
-                        SDL_Delay(70);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-            else{
-                switch (event.key.keysym.sym) {
-                    case SDLK_m:
-                        menuState = 0;
-                        break;
-                    case SDLK_r:
-                        menuState = 1;
-                        break;
-                    default:
-                        break;
-=======
 
                 if(event.key.keysym.sym == key.interactKey){
                     SDL_RenderClear(renderer);
@@ -321,7 +248,6 @@ int main(int argc, char** argv) {
                     drawInteractiveParts(renderer, interactiveList, &difficulty);
                     leftPlayer(renderer, dm, &playerInfos);
                     SDL_Delay(70);
->>>>>>> feature/Parametres
                 }
             }
         }
