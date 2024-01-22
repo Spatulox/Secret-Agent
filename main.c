@@ -283,6 +283,8 @@ int main(int argc, char** argv) {
     //SDL_RenderPresent(renderer);
     //SDL_Delay(10000);
 
+    Log("Exiting Secret-Agent");
+
     freeChainList(&interactiveList);
 
     SDL_DestroyRenderer(renderer);
@@ -293,6 +295,9 @@ int main(int argc, char** argv) {
     TTF_Quit();
     SDL_Quit();
 
+    Log("RAM of Secret-Agent full free");
+    Log("Exit");
+    Log("---------------------------");
 
 
     return 0;
