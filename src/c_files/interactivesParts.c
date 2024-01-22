@@ -657,8 +657,7 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
                 // Next to a stair
                 // check x of the stair and player
                 // check the y of the player and the stairs
-                if(player->coordinates.x >= min && player->coordinates.x <= max && tmp == player->coordinates.y){
-
+                if(player->coordinates.x >= min && player->coordinates.x <= max && ( player->coordinates.y >= tmp  && tmp*1.2 >= player->coordinates.y)){
                     Stairs * nextStairs = (Stairs *) interactiveList->interactivePart.part.stairs.linkStairs;
 
                     if(changeFloor == 0 && interactiveList->interactivePart.part.stairs.upDownStairs == 0){
