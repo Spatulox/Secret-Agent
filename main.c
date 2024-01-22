@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
     int difficulty = 0;
 
     // Initialize menu
-    Button buttons[6];
+    Button buttons[11];
 
     // Initialize the player infos
     Player playerInfos;
@@ -95,8 +95,13 @@ int main(int argc, char** argv) {
 
     // Initialize music
     SDL_Thread *audio = NULL;
+
     //executeMusic(audio, &menuState); //useless
     //SDL_Delay(100);
+
+    executeMusic(audio, &menuState);
+    SDL_Delay(200);
+
 
     // Reserved the building var
     Building build;
