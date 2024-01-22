@@ -162,10 +162,12 @@ int main(int argc, char** argv) {
     while(isRunning){
 
         // Render the renderer
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderPresent(renderer);
 
         // Create the menu
         if(lastMenuState != menuState && menuState < 3){
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             createMenu(window, renderer, width, height, dm, "./fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
             executeMusic(audio, &menuState);
@@ -239,14 +241,24 @@ int main(int argc, char** argv) {
                     SDL_RenderClear(renderer);
                     drawBuilding(renderer, &build, &dm, &difficulty);
                     drawInteractiveParts(window, renderer, interactiveList, &difficulty);
-                    rightPlayer(renderer, dm, &playerInfos);
+                    if(checkCollision(interactiveList, &playerInfos, 1) == 0) {
+                        rightPlayer(renderer, dm, &playerInfos);
+                    }
+                    else{
+                        drawPlayer(renderer, dm, &playerInfos);
+                    }
                     SDL_Delay(70);
                 }
                 else if(event.key.keysym.sym == key.leftKey){
                     SDL_RenderClear(renderer);
                     drawBuilding(renderer, &build, &dm, &difficulty);
                     drawInteractiveParts(window, renderer, interactiveList, &difficulty);
-                    leftPlayer(renderer, dm, &playerInfos);
+                    if(checkCollision(interactiveList, &playerInfos, 0) == 0){
+                        leftPlayer(renderer, dm, &playerInfos);
+                    }
+                    else{
+                        drawPlayer(renderer, dm, &playerInfos);
+                    }
                     SDL_Delay(70);
                 }
             }
