@@ -217,7 +217,7 @@ int main(int argc, char** argv) {
 
                 if(menuState != 3){
                     // We are in the menu
-                    changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons);
+                    changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons, &key);
                 }
                 else{
                     // We are not in the menu
