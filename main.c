@@ -27,6 +27,54 @@ int main(int argc, char** argv) {
     Log("---------------------------");
     Log("Starting Secret Agent");
 
+    Log("Reading conf file");
+
+    // Read the conf file or create it
+    FILE *fp = fopen("conf.txt", "r");
+    if (fp == NULL) {
+
+        if(createConfFile() != 0){
+            Log("Impossible to create the conf File");
+        }
+    }
+
+    // Assigning value to struct
+    PRESSED_KEY key;
+
+    char * tmp = readConfFile(3);
+    if(tmp == NULL){
+        key.leftKey = SDLK_q;
+        Log("Default value for left");
+    }
+    else{
+        key.leftKey = atoi(tmp);
+    }
+
+    tmp = readConfFile(4);
+    if(tmp == NULL){
+        key.rightKey = SDLK_d;
+        Log("Default value for rightkey");
+    }
+    else{
+        key.rightKey = atoi(tmp);
+    }
+
+    tmp = readConfFile(5);
+    if(tmp == NULL){
+        key.interactKey = SDLK_z;
+        Log("Default value for interactkey");
+    }
+    else{
+        key.interactKey = atoi(tmp);
+    }
+
+    if (tmp != NULL){
+        free(tmp);
+    }
+
+
+    // Initialize plein de trucs
+
     SDL_Event event;
 
     // ------------Initialize SDL and SDL addons------------
