@@ -157,7 +157,7 @@ int createDoorsAndButtons(SDL_Window *window, const int * difficulty, Interactiv
     srand((unsigned int) time(NULL)); // Initialisation de la graine pour la fonction rand
     random_number = (rand() % (*difficulty*2)) + 1;
 
-    if(random_number <= 4){
+    if(random_number <= 6){
         Log("Creating Doors / Button / Lift");
 
         // Create Buttons and doors
