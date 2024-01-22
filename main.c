@@ -230,25 +230,31 @@ int main(int argc, char** argv) {
 
                 if(event.key.keysym.sym == key.interactKey){
                     SDL_RenderClear(renderer);
-                    interactWithPart(interactiveList, &playerInfos);
+                    interactWithPart(interactiveList, &playerInfos, &menuState);
                     drawBuilding(renderer, &build, &dm, &difficulty);
-                    drawInteractiveParts(renderer, interactiveList, &difficulty);
+                    drawInteractiveParts(window, renderer, interactiveList, &difficulty);
                     drawPlayer(renderer, dm, &playerInfos);
                 }
                 else if(event.key.keysym.sym == key.rightKey){
                     SDL_RenderClear(renderer);
                     drawBuilding(renderer, &build, &dm, &difficulty);
-                    drawInteractiveParts(renderer, interactiveList, &difficulty);
+                    drawInteractiveParts(window, renderer, interactiveList, &difficulty);
                     rightPlayer(renderer, dm, &playerInfos);
                     SDL_Delay(70);
                 }
                 else if(event.key.keysym.sym == key.leftKey){
                     SDL_RenderClear(renderer);
                     drawBuilding(renderer, &build, &dm, &difficulty);
-                    drawInteractiveParts(renderer, interactiveList, &difficulty);
+                    drawInteractiveParts(window, renderer, interactiveList, &difficulty);
                     leftPlayer(renderer, dm, &playerInfos);
                     SDL_Delay(70);
                 }
+            }
+            else if(event.key.keysym.sym == SDLK_m) {
+                menuState = 0;
+            }
+            else if(event.key.keysym.sym == SDLK_r) {
+                menuState = 1;
             }
         }
 
