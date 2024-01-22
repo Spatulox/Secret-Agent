@@ -9,8 +9,9 @@
 
 #include "../includes/buttons.h"
 #include "../includes/global_functions.h"
+#include "../includes/pressed_key.h"
 
-void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thread *audio, SDL_Point clickPoint, Button buttons[]){
+void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thread *audio, SDL_Point clickPoint, Button buttons[], PRESSED_KEY * key){
 
     if (*menuState == 0) {
         for (int i = 0; i < 3; i++) {
@@ -80,25 +81,12 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
                         }
                     }
 
-                    FILE *fp = fopen("../cmake-build-debug/conf.txt", "r+");
 
-                    int key = event.key.keysym.sym;
-
-                    int line = 0;
-                    while (!feof(fp)) {
-                        char buffer[100];
-                        fgets(buffer, 100, fp);
-                        if (strstr(buffer, "keyNumLeft") != NULL) {
-                            line = ftell(fp);
-                            break;
-                        }
+                    if(writeConfFile(3, event.key.keysym.sym, "keyNumLeft") != 0){
+                        Log("ERROR : Impossible to write in the conf file");
+                        break;
                     }
-
-                    fseek(fp, line, SEEK_SET);
-
-                    fprintf(fp, "%d\n", key);
-
-                    fclose(fp);
+                    key->leftKey = event.key.keysym.sym;
 
                     Log("Touche écrite dans conf.txt");
 
@@ -121,13 +109,11 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
                         }
                     }
 
-                    FILE *fp = fopen("../cmake-build-debug/conf.txt", "a");
-
-                    int key = event.key.keysym.sym;
-
-                    fprintf(fp, "keyNumRight = %d\n", key);
-
-                    fclose(fp);
+                    if(writeConfFile(4, event.key.keysym.sym, "keyNumRight") != 0){
+                        Log("ERROR : Impossible to write in the conf file");
+                        break;
+                    }
+                    key->rightKey = event.key.keysym.sym;
 
                     Log("Touche écrite dans conf.txt");
 
@@ -150,13 +136,12 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
                             }
                         }
                     }
-                    FILE *fp = fopen("../cmake-build-debug/conf.txt", "a");
 
-                    int key = event.key.keysym.sym;
-
-                    fprintf(fp, "keyNumInteract = %d\n", key);
-
-                    fclose(fp);
+                    if(writeConfFile(5, event.key.keysym.sym, "keyNumInteract") != 0){
+                        Log("ERROR : Impossible to write in the conf file");
+                        break;
+                    }
+                    key->interactKey = event.key.keysym.sym;
 
                     Log("Touche écrite dans conf.txt");
 
