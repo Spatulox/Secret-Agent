@@ -29,6 +29,13 @@ void changeMenuState(int * isRunning, int * menuState, int * difficulty, SDL_Thr
                 }
             }
         }
+
+        if (SDL_PointInRect(&clickPoint, &(buttons[11].rect))) {
+            if (strcmp(buttons[11].text, "Boutique") == 0) {
+                system("start https://www.amazon.fr/Noble-Collection-Minecraft-Potion-Bottle/dp/B0CJYK3MQ9/ref=sr_1_41?keywords=potion");
+            }
+        }
+
     } else if (*menuState == 1) {
         for (int i = 3; i < 6; i++) {
             if (SDL_PointInRect(&clickPoint, &(buttons[i].rect))) {

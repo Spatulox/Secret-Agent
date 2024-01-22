@@ -136,7 +136,7 @@ int main(int argc, char** argv) {
     int difficulty = 0;
 
     // Initialize menu
-    Button buttons[11];
+    Button buttons[12];
 
     // Initialize the player infos
     Player playerInfos;

@@ -107,13 +107,13 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
     SDL_RenderClear(renderer);
     Mix_HaltMusic();
 
-    buttons[0].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3) - (height / 2), width, height - (dm.h / 30)};
+    buttons[0].rect = (SDL_Rect){(dm.w / 2) - (width*1.5 / 2), (dm.h / 4.5) - (height / 2), width *1.5, height*1.5 - (dm.h / 30)};
     buttons[0].text = "Jouer";
 
-    buttons[1].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 2) - (height / 2), width, height - (dm.h / 30)};
+    buttons[1].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.5) - (height / 2), width, height - (dm.h / 30)};
     buttons[1].text = "Parametres";
 
-    buttons[2].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.5) - (height / 2), width, height - (dm.h / 30)};
+    buttons[2].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.2) - (height / 2), width, height - (dm.h / 30)};
     buttons[2].text = "Quitter le jeu";
 
     buttons[3].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 3) - (height / 2), width, height - (dm.h / 30)};
@@ -140,6 +140,9 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
     buttons[10].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 1.2) - (height / 2), width, height - (dm.h / 30)};
     buttons[10].text = "Retour";
 
+    buttons[11].rect = (SDL_Rect){(dm.w / 2) - (width / 2), (dm.h / 2) - (height / 2), width, height - (dm.h / 30)};
+    buttons[11].text = "Boutique";
+
     SDL_Color fColor = {0, 0, 0};
 
     //SDL_Log("creating buttons menu state : %d", *menuState);
@@ -149,6 +152,8 @@ void createMenu(SDL_Window * window, SDL_Renderer* renderer, int width, int heig
         for (int i = 0; i < 3; i++) {
             createTextRectButton(&buttons[i].rect, window, renderer, dm, 255, 255, 255, 255, buttons[i].text, fontPath, fColor);
         }
+
+        createTextRectButton(&buttons[11].rect, window, renderer, dm, 255, 255, 255, 255, buttons[11].text, fontPath, fColor);
     }
     else if(*menuState == 1){
         for (int i = 3; i < 6; i++) {
