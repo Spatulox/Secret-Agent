@@ -45,6 +45,111 @@ void Log(char *string){
 
 // ----------------------------------------------------------- //
 
+int createConfFile(){
+    FILE *fp = fopen("conf.txt", "w");
+    if (fp == NULL) {
+        Log("No conf file ?? WTF RELAUCH THE GAME");
+        return 1;
+    }
+
+    // Écrire chaque ligne avec un espace réservé pour la ligne la plus longue
+    int x = 10;
+
+    fprintf(fp, "##KEYBINDS%-*s\n", x, "##");
+    fprintf(fp, "#Association des touches%-*s\n\n", x,"#");
+    fprintf(fp, "keyNumLeft =%-*s\n", x, "1");
+    fprintf(fp, "keyNumRight =%-*s\n", x, "2");
+    fprintf(fp, "keyNumInteract =%-*s\n", x, "3");
+
+    // Fermer le fichier
+    fclose(fp);
+    return 0;
+}
+
+// ----------------------------------------------------------- //
+
+int writeConfFile(int lineNum, int key, char * string){
+
+    if( key == 114 || key == 109){
+        Log("WARNING : Already use for reload / go to menu");
+        return 0;
+    }
+
+    FILE *fp = fopen("../cmake-build-debug/conf.txt", "r+");
+
+    if (fp == NULL) {
+        Log("Chelou mon reuf, le fichier existait avant");
+        return 1;
+    }
+
+    char lines[10][100];
+    int i = 0;
+
+    while (fgets(lines[i], 100, fp)) {
+        i++;
+    }
+
+    fclose(fp);
+
+    sprintf(lines[lineNum], "%s =%d\n", string, key);
+
+    fp = fopen("conf.txt", "w");
+    if (fp == NULL) {
+        Log("Chelou mon reuf, le fichier existait avant");
+        return 1;
+    }
+
+    for (int y = 0; y < i; y++) {
+        fprintf(fp, "%s", lines[y]);
+    }
+
+    fclose(fp);
+
+    return 0;
+}
+
+// ----------------------------------------------------------- //
+
+char* readConfFile(int lineNum){
+    FILE *fp = fopen("../cmake-build-debug/conf.txt", "r+");
+
+    if (fp == NULL) {
+        Log("Chelou mon reuf, le fichier existait avant");
+        return NULL;
+    }
+
+    char lines[10][100];
+    int i = 0;
+
+    /*while (fgets(lines[i], 100, fp)) {
+        if(i == lineNum){
+            break;
+        }
+        i++;
+    }
+    return lines[i];*/
+
+    while (fgets(lines, sizeof(lines), fp)) {
+        if(i == lineNum){
+            char *value = strchr(lines, '='); // Find the position of the equal sign
+            if (value != NULL) {
+                // Return the value after the equal sign (trimming any whitespace)
+                fclose(fp);
+                return strdup(value + 1);
+            } else {
+                // Handle lines without an equal sign
+                fclose(fp);
+                return NULL;
+            }
+        }
+        i++;
+    }
+    fclose(fp);
+    return NULL;
+}
+
+// ----------------------------------------------------------- //
+
 void destroySDL(SDL_Window * window, SDL_Renderer * renderer, SDL_Texture * texture){
 
     if (texture != NULL){

@@ -18,6 +18,7 @@
 #include "src/includes/player.h"
 #include "src/includes/audioData.h"
 #include "src/includes/interactivesStruct.h"
+#include "src/includes/pressed_key.h"
 
 #include <SDL_image.h>
 
@@ -26,6 +27,54 @@ int main(int argc, char** argv) {
 
     Log("---------------------------");
     Log("Starting Secret Agent");
+
+    Log("Reading conf file");
+
+    // Read the conf file or create it
+    FILE *fp = fopen("conf.txt", "r");
+    if (fp == NULL) {
+
+        if(createConfFile() != 0){
+            Log("Impossible to create the conf File");
+        }
+    }
+
+    // Assigning value to struct
+    PRESSED_KEY key;
+
+    char * tmp = readConfFile(3);
+    if(tmp == NULL){
+        key.leftKey = SDLK_q;
+        Log("Default value for left");
+    }
+    else{
+        key.leftKey = atoi(tmp);
+    }
+
+    tmp = readConfFile(4);
+    if(tmp == NULL){
+        key.rightKey = SDLK_d;
+        Log("Default value for rightkey");
+    }
+    else{
+        key.rightKey = atoi(tmp);
+    }
+
+    tmp = readConfFile(5);
+    if(tmp == NULL){
+        key.interactKey = SDLK_z;
+        Log("Default value for interactkey");
+    }
+    else{
+        key.interactKey = atoi(tmp);
+    }
+
+    if (tmp != NULL){
+        free(tmp);
+    }
+
+
+    // Initialize plein de trucs
 
     SDL_Event event;
 
@@ -87,7 +136,7 @@ int main(int argc, char** argv) {
     int difficulty = 0;
 
     // Initialize menu
-    Button buttons[6];
+    Button buttons[11];
 
     // Initialize the player infos
     Player playerInfos;
@@ -95,8 +144,13 @@ int main(int argc, char** argv) {
 
     // Initialize music
     SDL_Thread *audio = NULL;
+
     //executeMusic(audio, &menuState); //useless
     //SDL_Delay(100);
+
+    executeMusic(audio, &menuState);
+    SDL_Delay(200);
+
 
     // Reserved the building var
     Building build;
@@ -178,7 +232,7 @@ int main(int argc, char** argv) {
 
                 if(menuState != 3){
                     // We are in the menu
-                    changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons);
+                    changeMenuState(&isRunning, &menuState, &difficulty, audio, clickPoint, buttons, &key);
                 }
                 else{
                     // We are not in the menu
@@ -187,6 +241,7 @@ int main(int argc, char** argv) {
 
             }
             else if (event.type == SDL_KEYDOWN && menuState == 3) {
+<<<<<<< HEAD
                 switch (event.key.keysym.sym) {
                     case SDLK_z:
                         SDL_RenderClear(renderer);
@@ -244,6 +299,29 @@ int main(int argc, char** argv) {
                         break;
                     default:
                         break;
+=======
+
+                if(event.key.keysym.sym == key.interactKey){
+                    SDL_RenderClear(renderer);
+                    interactWithPart(interactiveList, &playerInfos);
+                    drawBuilding(renderer, &build, &dm, &difficulty);
+                    drawInteractiveParts(renderer, interactiveList, &difficulty);
+                    drawPlayer(renderer, dm, &playerInfos);
+                }
+                else if(event.key.keysym.sym == key.rightKey){
+                    SDL_RenderClear(renderer);
+                    drawBuilding(renderer, &build, &dm, &difficulty);
+                    drawInteractiveParts(renderer, interactiveList, &difficulty);
+                    rightPlayer(renderer, dm, &playerInfos);
+                    SDL_Delay(70);
+                }
+                else if(event.key.keysym.sym == key.leftKey){
+                    SDL_RenderClear(renderer);
+                    drawBuilding(renderer, &build, &dm, &difficulty);
+                    drawInteractiveParts(renderer, interactiveList, &difficulty);
+                    leftPlayer(renderer, dm, &playerInfos);
+                    SDL_Delay(70);
+>>>>>>> feature/Parametres
                 }
             }
         }
