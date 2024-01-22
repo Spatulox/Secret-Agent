@@ -108,6 +108,45 @@ int writeConfFile(int lineNum, int key, char * string){
     return 0;
 }
 
+// ----------------------------------------------------------- //
+
+char* readConfFile(int lineNum){
+    FILE *fp = fopen("../cmake-build-debug/conf.txt", "r+");
+
+    if (fp == NULL) {
+        Log("Chelou mon reuf, le fichier existait avant");
+        return NULL;
+    }
+
+    char lines[10][100];
+    int i = 0;
+
+    /*while (fgets(lines[i], 100, fp)) {
+        if(i == lineNum){
+            break;
+        }
+        i++;
+    }
+    return lines[i];*/
+
+    while (fgets(lines, sizeof(lines), fp)) {
+        if(i == lineNum){
+            char *value = strchr(lines, '='); // Find the position of the equal sign
+            if (value != NULL) {
+                // Return the value after the equal sign (trimming any whitespace)
+                fclose(fp);
+                return strdup(value + 1);
+            } else {
+                // Handle lines without an equal sign
+                fclose(fp);
+                return NULL;
+            }
+        }
+        i++;
+    }
+    fclose(fp);
+    return NULL;
+}
 
 // ----------------------------------------------------------- //
 
