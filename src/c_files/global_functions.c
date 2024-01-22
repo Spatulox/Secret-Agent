@@ -45,6 +45,29 @@ void Log(char *string){
 
 // ----------------------------------------------------------- //
 
+int createConfFile(){
+    FILE *fp = fopen("conf.txt", "w");
+    if (fp == NULL) {
+        Log("No conf file ?? WTF RELAUCH THE GAME");
+        return 1;
+    }
+
+    // Écrire chaque ligne avec un espace réservé pour la ligne la plus longue
+    int x = 10;
+
+    fprintf(fp, "##KEYBINDS%-*s\n", x, "##");
+    fprintf(fp, "#Association des touches%-*s\n\n", x,"#");
+    fprintf(fp, "keyNumLeft =%-*s\n", x, "1");
+    fprintf(fp, "keyNumRight =%-*s\n", x, "2");
+    fprintf(fp, "keyNumInteract =%-*s\n", x, "3");
+
+    // Fermer le fichier
+    fclose(fp);
+    return 0;
+}
+
+// ----------------------------------------------------------- //
+
 void destroySDL(SDL_Window * window, SDL_Renderer * renderer, SDL_Texture * texture){
 
     if (texture != NULL){
