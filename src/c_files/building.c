@@ -16,7 +16,6 @@ void placeInteractiveParts(){
 
 int createBuilding(SDL_Renderer * renderer, const int * difficulty, Building * Build, const SDL_DisplayMode * dm)
 {
-    //SDL_Log("%d", dm->w);
     Log("Creating Building");
     double x1= (dm->w)*0.1;
     double x2= (dm->w)-x1;
@@ -44,7 +43,6 @@ int createBuilding(SDL_Renderer * renderer, const int * difficulty, Building * B
 }
 
 void drawBuilding(SDL_Renderer * renderer, Building * Build, const SDL_DisplayMode * dm, const int * difficulty){
-    //Log("Drawing Building");
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     // Draw walls
@@ -57,7 +55,6 @@ void drawBuilding(SDL_Renderer * renderer, Building * Build, const SDL_DisplayMo
     // Drawn floors
     double baseDmHeight = dm->h*0.1;
     int deltaBaseCeil = Build->rightWall.y2 - Build->rightWall.y1;
-    //SDL_Log("DeltaBaseCeil : %d", deltaBaseCeil);
 
     int maxI = *difficulty * 3;
     for (int i = 1; i < maxI; ++i) {
