@@ -192,7 +192,7 @@ void executeMusic(SDL_Thread *audio, int *menuState){
         }
         else if (*menuState == 3) {
             AudioData *playMenuMusic = malloc(sizeof(AudioData));
-            playMenuMusic->string = "./musics/Ado.mp3";
+            playMenuMusic->string = "./musics/regrets_avec_rythmique.mp3";
             playMenuMusic->repeat = 50;
 
             SDL_DetachThread(audio);

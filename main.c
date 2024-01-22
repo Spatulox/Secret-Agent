@@ -145,13 +145,6 @@ int main(int argc, char** argv) {
     // Initialize music
     SDL_Thread *audio = NULL;
 
-    //executeMusic(audio, &menuState); //useless
-    //SDL_Delay(100);
-
-    executeMusic(audio, &menuState);
-    SDL_Delay(200);
-
-
     // Reserved the building var
     Building build;
 
@@ -170,7 +163,6 @@ int main(int argc, char** argv) {
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             createMenu(window, renderer, width, height, dm, "./fonts/arial.ttf", buttons, &menuState);
             lastMenuState = menuState;
-            executeMusic(audio, &menuState);
         }
 
         // Create the building and load the player
