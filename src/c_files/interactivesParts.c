@@ -10,7 +10,6 @@
 #include "../includes/global_functions.h"
 
 #include "../includes/interactivesParts.h"
-#include "../includes/structPlayer.h"
 
 // Global Var //
 SDL_Surface* imageSurfaceUpStairs = NULL;
@@ -74,9 +73,7 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
 
     int heightOfFloorDownS = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+2));
     int heightOfFloorUpS = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+1));
-    //SDL_Log("%d", heightOfFloorDownS);
     int heightOfStairs = (int) baseDmHeight + ((deltaBaseCeil / (maxI)) * (i+3)) - heightOfFloorDownS;
-    //SDL_Log("%d", heightOfStairs);
 
 
     // Create the upstairs (up)
@@ -93,16 +90,11 @@ int createStairs(SDL_Window *window, const int * difficulty, InteractiveList ** 
     // up stair
     partUpStairs->part.stairs.position.x = random_number;
     partUpStairs->part.stairs.position.y = heightOfFloorUpS-heightOfStairs;
-    //partUpStairs->part.stairs.size.width = random_number;
     partUpStairs->part.stairs.size.height = heightOfStairs;
 
     // down stair
     partDownStairs->part.stairs.position.x = random_number;
     partDownStairs->part.stairs.position.y = heightOfFloorDownS-heightOfStairs;
-
-    //part->part.stairs.position.y-part->part.stairs.size.height;
-
-    //partDownStairs->part.stairs.size.width = random_number;
     partDownStairs->part.stairs.size.height = heightOfStairs;
 
     // Link the two stairs
@@ -142,9 +134,6 @@ int createChest(SDL_Window *window, InteractiveList ** interactiveList, const in
     SDL_GetWindowSize(window, &window_width, &window_height);
     int max = (int) (window_width - (window_width * 0.10));
 
-    //int ceilBuildHeight = (int) (window_height*0.1);
-    //int totalBuildingHeight = window_height - ceilBuildHeight;
-    //int lastFloor = (totalBuildingHeight/ (*difficulty*3)) + ceilBuildHeight;
     int lastFloor = getLastFloorGround(&window_height, difficulty);
     if(lastFloor == -1){
         Log("Impossible to calculate the lastFloor ground");
@@ -354,10 +343,6 @@ int drawButtons(SDL_Window * window, SDL_Renderer * renderer, InteractivePart *p
 
 
         // Determine the floor
-        /*Doors *door = (Doors *) part->part.button.activeThing;
-        door->active = 1;
-        door->position.x = 200;
-        door->position.y = ceil;*/
 
         random_number = min + rand() % (max - min + 1);
         InteractivePart *door = (InteractivePart *) part->part.button.activeThing;
@@ -520,9 +505,6 @@ int drawStairs(SDL_Renderer * renderer, InteractivePart *part){
 void drawInteractiveParts(SDL_Window *window, SDL_Renderer * renderer, InteractiveList *list, const int * difficulty){
 
     int element = 1;
-   /* Log("-----Print LIST-----");
-    printInteractiveList(list);
-    Log("-----Print LIST FINI-----");*/
     while (list != NULL) {
         // Imprimer les détails de l'élément interactif en cours
         //SDL_Log("%d", element);
@@ -608,8 +590,6 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
             case BUTTON:
 
                 // Button Part
-
-                //SDL_Log("Interactive Type: Button\n");
                 partX = interactiveList->interactivePart.part.button.position.x;
                 partY = interactiveList->interactivePart.part.button.position.y;
 
@@ -622,7 +602,6 @@ void interactWithPart(InteractiveList * interactiveList, Player * player, int * 
                     min = partY - (40 * 1.5);
                     max = partY + 40 + (40 * 1.5);
 
-                    //SDL_Log("partY %d, min %d, max %d, player y %d", partY, min, max, player->coordinates.y);
 
                     if(player->coordinates.y >= min && player->coordinates.y <= max) {
 
@@ -724,15 +703,12 @@ int checkCollision(InteractiveList * interactiveList, Player * player, int leftR
         switch (interactiveList->interactivePart.type) {
             // The doors collision cause the doors are inside the buttons
             case BUTTON:
-                displayInteractivePart(&interactiveList->interactivePart);
                 doors = (InteractivePart *) interactiveList->interactivePart.part.button.activeThing;
 
                 int min = doors->part.door.position.x - player->size.width*1.2;
                 int max = doors->part.door.position.x + player->size.width*0.2;
                 int y = (doors->part.door.position.y + doors->part.door.size.height) - player->size.height;
 
-                SDL_Log("%d, %d", min, max);
-                SDL_Log("%d", player->coordinates.x);
                 if(doors->part.door.active == 1){
 
                     if(player->coordinates.x >= min && player->coordinates.x <= max && player->coordinates.y == y)

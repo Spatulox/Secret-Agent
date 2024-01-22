@@ -200,27 +200,23 @@ void displayInteractivePart(InteractivePart * part) {
             SDL_Log(" | Active: %d\n", part->part.button.active);
             SDL_Log(" | Position: (%d, %d)\n", part->part.button.position.x, part->part.button.position.y);
             SDL_Log(" | ActiveThing: %p\n", part->part.button.activeThing);
-            /*door = (Doors *) part->part.button.activeThing;
-            SDL_Log(" | Type: Door\n");
-            SDL_Log(" |  | Address: %p\n", door);
-            SDL_Log(" |  | Active: %d\n", door->active);
-            SDL_Log(" |  | Position: (%d, %d)\n", door->position.x, door->position.y);*/
+
             InteractivePart * interPart = (InteractivePart *) part->part.button.activeThing;
             SDL_Log(" | Type: Door\n");
             SDL_Log(" |  | Address: %p\n", interPart);
             SDL_Log(" |  | Active: %d\n", interPart->part.door.active);
             SDL_Log(" |  | Position: (%d, %d)\n", interPart->part.door.position.x, interPart->part.door.position.y);
             SDL_Log(" |  | Size: (%d, %d)\n", interPart->part.door.size.width, interPart->part.door.size.height);
-            // Ajouter les champs spécifiques de la structure InGameButton
             break;
+
         case ELECTRIC_METER:
             SDL_Log("Type: ElectricMeter\n");
             SDL_Log(" | Address: %p\n", part);
             SDL_Log(" | Active: %d\n", part->part.electricMeter.active);
             SDL_Log(" | Position: (%d, %d)\n", part->part.electricMeter.position.x, part->part.electricMeter.position.y);
             SDL_Log(" | ActiveThing: %p\n", part->part.electricMeter.activeThing);
-            // Ajouter les champs spécifiques de la structure ElectricMeter
             break;
+
         case CODE:
             SDL_Log("Type: Code\n");
             SDL_Log(" | Address: %p\n", part);
@@ -228,27 +224,25 @@ void displayInteractivePart(InteractivePart * part) {
             SDL_Log(" | Position: (%d, %d)\n", part->part.code.position.x, part->part.code.position.y);
             SDL_Log(" | Code: %d\n", part->part.code.code);
             SDL_Log(" | ActiveThing: %p\n", part->part.code.activeThing);
-            // Ajouter les champs spécifiques de la structure Code
             break;
+
         case LIFT:
             SDL_Log("Type: Lift\n");
             SDL_Log(" | Address: %p\n", part);
             SDL_Log(" | Active: %d\n", part->part.lift.active);
             SDL_Log(" | Position: (%d, %d)\n", part->part.lift.position.x, part->part.lift.position.y);
-            // Ajouter les champs spécifiques de la structure Lift
             break;
+
         case DOOR:
             SDL_Log("Type: Door\n");
             SDL_Log(" | Address global struct: %p\n", part);
-            //SDL_Log(" | Active: %d\n", part->part.door.active);
-            //SDL_Log(" | Position: (%d, %d)\n", part->part.door.position.x, part->part.door.position.y);
             door = (Doors *) &part->part.door;
             SDL_Log(" |  | Address under struct door: %p\n", door);
             SDL_Log(" |  | Active: %d\n", door->active);
             SDL_Log(" |  | Position: (%d, %d)\n", door->position.x, door->position.y);
             SDL_Log(" |  | Size: (%d, %d)\n", door->size.width, door->size.height);
-            // Ajouter les champs spécifiques de la structure Door
             break;
+
         case STAIRS:
             SDL_Log("Type: Stairs\n");
             SDL_Log(" | Address: %p\n", part);
@@ -259,14 +253,14 @@ void displayInteractivePart(InteractivePart * part) {
             SDL_Log("Type: Stairs\n");
             SDL_Log(" |  | UpDownStairs: %d\n", stairs->upDownStairs);
             SDL_Log(" |  | Position: (%d, %d)\n", stairs->position.x, stairs->position.y);
-            // Ajouter les champs spécifiques de la structure Stairs
             break;
+
         case CHEST:
             SDL_Log("Type: Chest\n");
             SDL_Log(" | Address: %p\n", part);
             SDL_Log(" | Position: (%d, %d)\n", part->part.chest.position.x, part->part.chest.position.y);
-            // Ajouter les champs spécifiques de la structure Chest
             break;
+
         default:
             SDL_Log("Type inconnu\n");
     }
