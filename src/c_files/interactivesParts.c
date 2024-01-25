@@ -710,9 +710,16 @@ int checkCollision(InteractiveList * interactiveList, Player * player, int leftR
                 int y = (doors->part.door.position.y + doors->part.door.size.height) - player->size.height;
 
                 if(doors->part.door.active == 1){
+                    SDL_Log("Terrible __");
 
-                    if(player->coordinates.x >= min && player->coordinates.x <= max && player->coordinates.y == y)
+                    SDL_Log("min : %d, max %d", min, max);
+                    SDL_Log("player x %d, player y %d", player->coordinates.x, player->coordinates.y);
+                    SDL_Log("y %d", y);
+
+                    //if(player->coordinates.x >= min && player->coordinates.x <= max && player->coordinates.y == y)
+                    if(player->coordinates.x >= min && player->coordinates.x <= max && player->coordinates.y >= y*0.9 && player->coordinates.y <= y*1.2)
                     {
+                        SDL_Log("Terrible");
                         // Inside the hitbox
                         if(player->coordinates.x < doors->part.door.position.x && leftRightPress == 0){
                             return 0;
